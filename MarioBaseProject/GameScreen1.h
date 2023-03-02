@@ -5,6 +5,8 @@
 #include "GameScreen.h"
 #include "Commons.h"
 
+class Texture2D;
+
 class GameScreen1 : GameScreen
 {
 	
@@ -20,8 +22,9 @@ public:
 private:
 	bool SetUpLevel();
 	Texture2D* m_background_texture;
+	
 protected:
-	class Texture2D;
+	
 
 };
 

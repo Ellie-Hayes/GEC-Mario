@@ -25,11 +25,8 @@ void GameScreen1::Update(float deltaTime, SDL_Event e)
 
 bool GameScreen1::SetUpLevel()
 {
-	/// <summary>
-	/// AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
-	/// </summary>
-	/// <returns></returns>
-	m_background_texture = new Texture2D*();
+	
+	m_background_texture = new Texture2D(m_renderer);
 	if (!m_background_texture->LoadFromFile("Images/Squiddy.jpg"))
 	{
 		std::cout << "Failed to load background texture!" << std::endl;

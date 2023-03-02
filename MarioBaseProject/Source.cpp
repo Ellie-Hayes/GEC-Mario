@@ -8,11 +8,13 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_mixer.h>
+#include "GameScreenManager.h"
 
 using namespace std;
 SDL_Window* g_window = nullptr;
 SDL_Renderer* g_renderer = nullptr;
-Texture2D* g_texture = nullptr; 
+GameScreenManager* game_screen_manager; 
+Uint32 g_old_time; 
 
 bool InitSDL();
 void CLoseSDL();
@@ -21,7 +23,14 @@ void Render();
 
 int main(int argc, char* args[])
 {
-	InitSDL();
+	if (InitSDL())
+	{
+		game_screen_manager = new GameScreenManager(g_renderer, SCREEN_LEVEL1);
+		//set the time
+		g_old_time = SDL_GetTicks();
+
+	}
+	
 
 	//flag to check if we wish to quit
 	bool quit = false;
@@ -44,9 +53,10 @@ int main(int argc, char* args[])
 
 bool Update()
 {
+	Uint32 new_time = SDL_GetTicks();
 	SDL_Event e;
 	SDL_PollEvent(&e);
-
+	
 	switch (e.type)
 	{
 	case SDL_QUIT:
@@ -65,6 +75,8 @@ bool Update()
 
 	}
 
+	game_screen_manager->Update((float)(new_time - g_old_time) / 1000.0f, e);
+	g_old_time = new_time;
 	return false; 
 }
 
@@ -103,12 +115,6 @@ bool InitSDL()
 				return false;
 			}
 
-			g_texture = new Texture2D(g_renderer);
-			if (!g_texture->LoadFromFile("Images/Squiddy.jpg"))
-			{
-				return false;
-			}
-
 		}
 		else
 		{
@@ -118,6 +124,7 @@ bool InitSDL()
 
 	}
 
+	return true; 
 }
 
 void Render()
@@ -125,8 +132,7 @@ void Render()
 	SDL_SetRenderDrawColor(g_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
 	SDL_RenderClear(g_renderer);
 
-	g_texture->Render(Vector2D(), SDL_FLIP_NONE);
-
+	game_screen_manager->Render(); 
 	SDL_RenderPresent(g_renderer);
 }
 
@@ -136,8 +142,9 @@ void CLoseSDL()
 	g_window = nullptr;
 	SDL_DestroyRenderer(g_renderer);
 	g_renderer = nullptr;
-	delete g_texture;
-	g_texture = nullptr;
+
+	delete game_screen_manager;
+	game_screen_manager = nullptr;
 
 
 	IMG_Quit();
