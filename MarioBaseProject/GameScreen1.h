@@ -4,8 +4,10 @@
 
 #include "GameScreen.h"
 #include "Commons.h"
+#include "Character.h"
 
 class Texture2D;
+class Character;
 
 class GameScreen1 : GameScreen
 {
@@ -22,6 +24,7 @@ public:
 private:
 	bool SetUpLevel();
 	Texture2D* m_background_texture;
+	Character* my_character;
 	
 protected:
 	

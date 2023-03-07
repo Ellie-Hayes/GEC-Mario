@@ -69,9 +69,9 @@ bool Update()
 			return true;
 			break;
 		}
-	case SDL_MOUSEBUTTONDOWN:
+	/*case SDL_MOUSEBUTTONDOWN:
 		return true;
-		break;
+		break;*/
 
 	}
 
