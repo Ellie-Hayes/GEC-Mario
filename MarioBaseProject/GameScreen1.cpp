@@ -6,6 +6,7 @@
 GameScreen1::GameScreen1(SDL_Renderer* renderer): GameScreen(renderer)
 {
 	SetUpLevel();
+	m_level_map = nullptr; 
 }
 
 GameScreen1::~GameScreen1()
@@ -38,6 +39,10 @@ void GameScreen1::Update(float deltaTime, SDL_Event e)
 	{
 		std::cout << "Box hit!" << std::endl;
 	}
+	/*if (Collisions::Instance()->Box(mario->GetCollisionBox(), ->GetCollisionBox()))
+	{
+		std::cout << "Box hit!" << std::endl;
+	}*/
 
 }
 
@@ -51,7 +56,34 @@ bool GameScreen1::SetUpLevel()
 		return false;
 	}
 
-	mario = new CharacterMario(m_renderer, "Images/Mario.png", Vector2D(64, 330));
-	luigi = new CharacterLuigi(m_renderer, "Images/Luigi.png", Vector2D(64, 330));
+	mario = new CharacterMario(m_renderer, "Images/Mario.png", Vector2D(64, 330), m_level_map);
+	luigi = new CharacterLuigi(m_renderer, "Images/Luigi.png", Vector2D(64, 330), m_level_map);
 	return false;
+}
+
+void GameScreen1::SetLevelMap()
+{
+	int map[MAP_HEIGHT][MAP_WIDTH] = { { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+					  { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+					  { 1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1 },
+					  { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+					  { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+					  { 0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0 },
+					  { 1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1 },
+					  { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+					  { 0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0 },
+					  { 1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1 },
+					  { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+					  { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+					  { 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 } };
+
+	//clear any old maps
+	if (m_level_map != nullptr)
+	{
+		delete m_level_map;
+	}
+
+	//set the new one
+	m_level_map = new LevelMap(map);
+
 }

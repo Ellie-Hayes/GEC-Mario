@@ -8,3 +8,6 @@
 #define JUMP_FORCE_DECREMENT 400
 #define INITIAL_JUMP_FORCE 600
 
+#define MAP_HEIGHT 13
+#define MAP_WIDTH 16
+

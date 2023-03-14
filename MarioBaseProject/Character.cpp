@@ -1,6 +1,6 @@
 #include "Character.h"
 
-Character::Character(SDL_Renderer* renderer, std::string imagePath, Vector2D start_position)
+Character::Character(SDL_Renderer* renderer, std::string imagePath, Vector2D start_position, LevelMap* map)
 {
 	m_renderer = renderer; m_position = start_position;
 	m_facing_direction = FACING_RIGHT; 
@@ -14,6 +14,8 @@ Character::Character(SDL_Renderer* renderer, std::string imagePath, Vector2D sta
 	{
 		std::cout << "Failed to load texture!" << std::endl;
 	}
+
+	m_current_level_map = map; 
 }
 
 Character::~Character()
@@ -84,7 +86,11 @@ void Character::AddGravity(float deltaTime)
 
 void Character::Jump()
 {
-	m_can_jump = false; 
-	m_jump_force = INITIAL_JUMP_FORCE; m_jumping = true; 
+	if (!m_jumping)
+	{
+		m_can_jump = false;
+		m_jump_force = INITIAL_JUMP_FORCE; m_jumping = true;
+	}
+	
 }
 
