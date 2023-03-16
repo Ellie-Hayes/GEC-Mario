@@ -14,7 +14,7 @@ public:
 	void Render(); 
 
 	Rect2D GetCollisionsBox() {
-		Rect2D(m_position.x, m_position.y,
+		return Rect2D(m_position.x, m_position.y,
 			m_texture->GetWidth()/3, m_texture->GetHeight());
 	};
 
@@ -31,9 +31,7 @@ private:
 	float m_single_sprite_h;
 	int m_num_hits_left;
 
-	/*SDL_Rect sourceRect;
-	SDL_Rect destRect;*/
-
+	
 };
 
 #endif

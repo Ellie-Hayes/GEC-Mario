@@ -9,9 +9,11 @@
 #include "Collisions.h"
 #include "Character.h"
 #include "LevelMap.h"
+#include "PowBlock.h"
 
 class Texture2D;
 class Character;
+class PowBlock; 
 
 class GameScreen1 : GameScreen
 {
@@ -24,6 +26,7 @@ public:
 
 	void Render() override; 
 	void Update(float deltaTime, SDL_Event e) override;
+	void UpdatePowBlock(); 
 
 private:
 	bool SetUpLevel();
@@ -33,6 +36,15 @@ private:
 	CharacterMario* mario;
 	CharacterLuigi* luigi; 
 	LevelMap* m_level_map; 
+	PowBlock* m_pow_block;
+
+	bool m_screenshake;
+	float m_shake_time;
+	float m_wobble;
+	float m_background_yPos;
+
+	void DoScreenShake();
+
 	
 protected:
 	

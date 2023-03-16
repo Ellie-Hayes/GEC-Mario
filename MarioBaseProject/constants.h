@@ -1,7 +1,7 @@
 #pragma once
 
-#define SCREEN_WIDTH 1920
-#define SCREEN_HEIGHT 1080 
+#define SCREEN_WIDTH 600
+#define SCREEN_HEIGHT 300
 #define MOVEMENTSPEED 250
 #define GRAVITYSTRENGTH 300
 
@@ -10,4 +10,5 @@
 
 #define MAP_HEIGHT 13
 #define MAP_WIDTH 16
+#define SHAKE_DURATION 0.25
 
