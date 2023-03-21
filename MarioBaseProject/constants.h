@@ -12,3 +12,5 @@
 #define MAP_WIDTH 16
 #define SHAKE_DURATION 0.25
 
+#define INJURED_TIME 2.5
+

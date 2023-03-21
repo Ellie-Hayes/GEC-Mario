@@ -6,7 +6,6 @@
 GameScreen1::GameScreen1(SDL_Renderer* renderer): GameScreen(renderer)
 {
 	SetUpLevel();
-	m_level_map = nullptr; 
 }
 
 GameScreen1::~GameScreen1()
@@ -19,10 +18,19 @@ GameScreen1::~GameScreen1()
 	luigi = nullptr;
 	delete m_pow_block;
 	m_pow_block = nullptr;
+
+	m_enemies.clear();
+
 }
 
 void GameScreen1::Render()
 {
+	//draw the enemies
+	for (int i = 0; i < m_enemies.size(); i++)
+	{
+		m_enemies[i]->Render();
+	}
+
 	m_background_texture->Render(Vector2D(0, m_background_yPos), SDL_FLIP_NONE);
 	mario->Render();
 	luigi->Render();
@@ -49,6 +57,7 @@ void GameScreen1::Update(float deltaTime, SDL_Event e)
 	mario->Update(deltaTime, e);
 	luigi->Update(deltaTime, e);
 	UpdatePowBlock();
+	UpdateEnemies(deltaTime, e);
 
 	if (Collisions::Instance()->Circle(mario, luigi))
 	{
@@ -79,7 +88,8 @@ void GameScreen1::UpdatePowBlock()
 
 bool GameScreen1::SetUpLevel()
 {
-	
+	SetLevelMap();
+
 	m_background_texture = new Texture2D(m_renderer);
 	if (!m_background_texture->LoadFromFile("Images/Squiddy.jpg"))
 	{
@@ -87,8 +97,8 @@ bool GameScreen1::SetUpLevel()
 		return false;
 	}
 
-	mario = new CharacterMario(m_renderer, "Images/Mario.png", Vector2D(64, 330), m_level_map);
-	luigi = new CharacterLuigi(m_renderer, "Images/Luigi.png", Vector2D(64, 330), m_level_map);
+	mario = new CharacterMario(m_renderer, "Images/Mario.png", Vector2D(64, 330), m_level_map, FACING_RIGHT, 1);
+	luigi = new CharacterLuigi(m_renderer, "Images/Luigi.png", Vector2D(64, 330), m_level_map, FACING_LEFT, 1);
 
 	m_pow_block = new PowBlock(m_renderer, m_level_map);
 	m_screenshake = false; 
@@ -129,4 +139,12 @@ void GameScreen1::DoScreenShake()
 	m_shake_time = SHAKE_DURATION;
 	m_wobble = 0.0f;
 
+}
+
+void GameScreen1::UpdateEnemies(float deltaTime, SDL_Event e)
+{
+}
+
+void GameScreen1::CreateKoopa(Vector2D position, FACING direction, float speed)
+{
 }

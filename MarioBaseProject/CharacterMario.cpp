@@ -1,25 +1,12 @@
 #include "CharacterMario.h"
-CharacterMario::CharacterMario(SDL_Renderer* renderer, std::string imagePath, Vector2D start_position, LevelMap* map) : Character(renderer, imagePath, start_position, map)
+CharacterMario::CharacterMario(SDL_Renderer* renderer, std::string imagePath, Vector2D start_position, LevelMap* map, FACING start_facing, float movement_speed) : Character(renderer, imagePath, start_position, map, start_facing, movement_speed)
 {
 		
 }
 
 void CharacterMario::Update(float deltaTime, SDL_Event e)
 {
-	//deal with jumping first
-	if (m_jumping)
-	{
-		//adjust position
-		m_position.y -= m_jump_force * deltaTime;
-
-		//reduce jump force
-		m_jump_force -= JUMP_FORCE_DECREMENT * deltaTime;
-
-		//is jump force 0?
-		if (m_jump_force <= 0.0f)
-			m_jumping = false;
-	}
-
+	
 	AddGravity(deltaTime);
 
 	switch (e.type)
@@ -56,13 +43,6 @@ void CharacterMario::Update(float deltaTime, SDL_Event e)
 		}
 	}
 
-	if (m_moving_left)
-	{
-		MoveLeft(deltaTime);
-	}
-	else if (m_moving_right)
-	{
-		MoveRight(deltaTime);
-	}
+	SetMovingAndJump(deltaTime);
 
 }

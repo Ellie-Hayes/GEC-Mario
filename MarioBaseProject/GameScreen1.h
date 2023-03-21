@@ -6,10 +6,12 @@
 #include "Commons.h"
 #include "CharacterMario.h"
 #include "CharacterLuigi.h"
+#include "CharacterKoopa.h"
 #include "Collisions.h"
 #include "Character.h"
 #include "LevelMap.h"
 #include "PowBlock.h"
+#include <vector>
 
 class Texture2D;
 class Character;
@@ -37,6 +39,7 @@ private:
 	CharacterLuigi* luigi; 
 	LevelMap* m_level_map; 
 	PowBlock* m_pow_block;
+	std::vector<CharacterKoopa*> m_enemies;
 
 	bool m_screenshake;
 	float m_shake_time;
@@ -44,6 +47,9 @@ private:
 	float m_background_yPos;
 
 	void DoScreenShake();
+	void UpdateEnemies(float deltaTime, SDL_Event e);
+	void CreateKoopa(Vector2D position, FACING direction, float speed);
+
 
 	
 protected:
