@@ -60,13 +60,13 @@ float Character::GetCollisionRadius()
 
 void Character::MoveLeft(float deltaTime)
 {
-	m_position.x -= deltaTime * MOVEMENTSPEED;
+	m_position.x -= deltaTime * m_movement_speed;
 	m_facing_direction = FACING_LEFT;
 }
 
 void Character::MoveRight(float deltaTime)
 {
-	m_position.x += deltaTime * MOVEMENTSPEED;	
+	m_position.x += deltaTime * m_movement_speed;
 	m_facing_direction = FACING_RIGHT;
 }
 

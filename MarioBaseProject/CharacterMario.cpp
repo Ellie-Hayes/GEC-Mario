@@ -1,7 +1,8 @@
 #include "CharacterMario.h"
 CharacterMario::CharacterMario(SDL_Renderer* renderer, std::string imagePath, Vector2D start_position, LevelMap* map, FACING start_facing, float movement_speed) : Character(renderer, imagePath, start_position, map, start_facing, movement_speed)
 {
-		
+	m_facing_direction = start_facing;
+	m_movement_speed = movement_speed;
 }
 
 void CharacterMario::Update(float deltaTime, SDL_Event e)

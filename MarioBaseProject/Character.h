@@ -29,9 +29,13 @@ public:
 
 	bool IsJumping() { return m_jumping; }
 	void CancelJump() { m_jumping = false; }
+
+	bool GetAlive() { return m_alive; }
+	void SetAlive(bool isAlive) { m_alive = isAlive; }
 	
 
 	FACING m_facing_direction;
+	float m_movement_speed;
 private:
 	LevelMap* m_current_level_map;
 protected:
@@ -42,6 +46,7 @@ protected:
 
 	bool m_moving_left;
 	bool m_moving_right;
+	bool m_alive;
 
 	virtual void MoveLeft(float deltaTime);
 	virtual void MoveRight(float deltaTime);
