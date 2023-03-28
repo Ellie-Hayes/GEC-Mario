@@ -3,6 +3,9 @@ CharacterMario::CharacterMario(SDL_Renderer* renderer, std::string imagePath, Ve
 {
 	m_facing_direction = start_facing;
 	m_movement_speed = movement_speed;
+
+	m_source_rect = { 0, 0, m_texture->GetWidth(), m_texture->GetHeight() };
+	m_draw_rect = { 0, 0, m_texture->GetWidth(), m_texture->GetHeight() };
 }
 
 void CharacterMario::Update(float deltaTime, SDL_Event e)

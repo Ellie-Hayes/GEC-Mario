@@ -17,7 +17,7 @@ public:
 	Character(SDL_Renderer* renderer, std::string imagePath, Vector2D start_position, LevelMap* map, FACING start_facing, float movement_speed);
 	~Character();
 
-	virtual void Render();
+	virtual void Render(SDL_Rect* camera_rect);
 	virtual void Update(float deltaTime, SDL_Event e);
 	void SetPosition(Vector2D new_position);
 	Vector2D GetPosition();
@@ -42,6 +42,9 @@ protected:
 	SDL_Renderer* m_renderer;
 	Vector2D m_position; 
 	Texture2D* m_texture; 
+
+	SDL_Rect m_source_rect; 
+	SDL_Rect m_draw_rect; 
 	float m_collision_radius;
 
 	bool m_moving_left;

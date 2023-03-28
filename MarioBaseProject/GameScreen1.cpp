@@ -30,17 +30,17 @@ void GameScreen1::Render()
 
 	for (int i = 0; i < m_enemies.size(); i++)
 	{
-		m_enemies[i]->Render();
+		m_enemies[i]->Render(camera);
 	}
 
 	for (int i = 0; i < m_coins.size(); i++)
 	{
-		m_coins[i]->Render();
+		m_coins[i]->Render(camera);
 	}
 
-	mario->Render();
-	luigi->Render();
-	m_pow_block->Render();
+	mario->Render(camera);
+	luigi->Render(camera);
+	m_pow_block->Render(camera);
 }
 
 void GameScreen1::Update(float deltaTime, SDL_Event e)
@@ -83,6 +83,10 @@ void GameScreen1::Update(float deltaTime, SDL_Event e)
 		//std::cout << "Box hit!" << std::endl;
 	}
 	
+	camera->x = (mario->GetCollisionBox().x / 2) - SCREEN_WIDTH / 2; 
+	//camera -> x = 100; 
+	if (camera->x < 0) { camera->x = 0; }
+	else if (camera->x > LEVEL_WIDTH - camera->w) { camera->x = LEVEL_WIDTH - camera->w; }
 
 }
 
@@ -105,6 +109,8 @@ bool GameScreen1::SetUpLevel()
 {
 	SetLevelMap();
 
+	camera = new SDL_Rect{ 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
+
 	m_background_texture = new Texture2D(m_renderer);
 	if (!m_background_texture->LoadFromFile("Images/Squiddy.jpg"))
 	{
@@ -114,7 +120,7 @@ bool GameScreen1::SetUpLevel()
 
 	mario = new CharacterMario(m_renderer, "Images/Mario.png", Vector2D(80, 100), m_level_map, FACING_RIGHT, MOVEMENTSPEED);
 	luigi = new CharacterLuigi(m_renderer, "Images/Luigi.png", Vector2D(60, 100), m_level_map, FACING_LEFT, MOVEMENTSPEED);
-
+	
 	CreateKoopa(Vector2D(80, 100), FACING_RIGHT, KOOPA_SPEED);
 	CreateKoopa(Vector2D(100, 200), FACING_LEFT, KOOPA_SPEED);
 
@@ -132,19 +138,20 @@ bool GameScreen1::SetUpLevel()
 
 void GameScreen1::SetLevelMap()
 {
-	int map[MAP_HEIGHT][MAP_WIDTH] = { { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-					  { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-					  { 1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1 },
-					  { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-					  { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-					  { 0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0 },
-					  { 1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1 },
-					  { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-					  { 0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0 },
-					  { 1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1 },
-					  { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-					  { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-					  { 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 } };
+	int map[MAP_HEIGHT][MAP_WIDTH] = { { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+										{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+										{ 1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1},
+										{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+										{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+										{ 0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0},
+										{ 1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1},
+										{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+										{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+										{ 1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1},
+										{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+										{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+										{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1} };
+
 
 	//clear any old maps
 	if (m_level_map != nullptr)

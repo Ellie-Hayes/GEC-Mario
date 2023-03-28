@@ -36,6 +36,7 @@ private:
 	void SetLevelMap();
 
 	Texture2D* m_background_texture;
+	SDL_Rect* camera;
 	CharacterMario* mario;
 	CharacterLuigi* luigi; 
 	LevelMap* m_level_map; 

@@ -9,7 +9,7 @@ public:
 	~CharacterCoin();
 
 	void Update(float deltaTime, SDL_Event e) override;
-	void Render() override;
+	void Render(SDL_Rect* camera_rect) override;
 
 private: 
 	float m_single_sprite_w;
