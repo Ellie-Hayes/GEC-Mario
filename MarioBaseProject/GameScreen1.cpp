@@ -83,7 +83,7 @@ void GameScreen1::Update(float deltaTime, SDL_Event e)
 		//std::cout << "Box hit!" << std::endl;
 	}
 	
-	camera->x = (mario->GetCollisionBox().x / 2) - SCREEN_WIDTH / 2; 
+	camera->x = mario->GetPosition().x - SCREEN_WIDTH / 2;
 	//camera -> x = 100; 
 	if (camera->x < 0) { camera->x = 0; }
 	else if (camera->x > LEVEL_WIDTH - camera->w) { camera->x = LEVEL_WIDTH - camera->w; }
@@ -138,7 +138,7 @@ bool GameScreen1::SetUpLevel()
 
 void GameScreen1::SetLevelMap()
 {
-	int map[MAP_HEIGHT][MAP_WIDTH] = { { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+	/*int map[MAP_HEIGHT][MAP_WIDTH] = { { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
 										{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 										{ 1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1},
 										{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -151,7 +151,30 @@ void GameScreen1::SetLevelMap()
 										{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 										{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 										{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1} };
+*/
 
+	ifstream inFile;
+
+	inFile.open("Levels/Level1.txt");
+
+	if (!inFile.good())
+	{
+		cerr << "Can't open text file " << endl;
+	}
+
+	int map[MAP_HEIGHT][MAP_WIDTH];
+	int tempNum;
+
+	for (int i = 0; i < MAP_HEIGHT; i++)
+	{
+		for (int j = 0; j < MAP_WIDTH; j++)
+		{
+			inFile >> tempNum;
+			map[i][j] = tempNum;
+		}
+	}
+
+	inFile.close();
 
 	//clear any old maps
 	if (m_level_map != nullptr)

@@ -45,3 +45,8 @@ void LevelMap::ChangeTileAt(unsigned int row, unsigned int column, unsigned int 
 {
 	m_map[row][column] = new_value;
 }
+
+void LevelMap::LoadLevelMap(std::string path)
+{
+	
+}
