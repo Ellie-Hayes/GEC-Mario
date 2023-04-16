@@ -12,6 +12,7 @@
 #include "Character.h"
 #include "LevelMap.h"
 #include "PowBlock.h"
+#include "TextRenderer.h"
 #include <vector>
 
 class Texture2D;
@@ -48,7 +49,11 @@ private:
 	float m_wobble;
 	float m_background_yPos;
 	float new_enemy_timer; 
+	
+	TextRenderer* m_text;
+	string scoreMessage;
 	int score; 
+	int old_score; 
 
 	void DoScreenShake();
 	void UpdateEnemies(float deltaTime, SDL_Event e);

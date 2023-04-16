@@ -8,6 +8,8 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_mixer.h>
+#include <SDL_ttf.h>
+
 #include "GameScreenManager.h"
 
 using namespace std;
@@ -137,7 +139,11 @@ bool InitSDL()
 			return false;
 		}
 
-
+		if (TTF_Init() == -1)
+		{
+			cout << "TTF could not init. Error: " << TTF_GetError();
+			return false;
+		}
 	}
 
 	return true; 
@@ -178,5 +184,6 @@ void CLoseSDL()
 
 	IMG_Quit();
 	SDL_Quit();
+	TTF_Quit();
 
 }

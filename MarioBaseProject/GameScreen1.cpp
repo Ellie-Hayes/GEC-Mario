@@ -41,6 +41,7 @@ void GameScreen1::Render()
 	mario->Render(camera);
 	luigi->Render(camera);
 	m_pow_block->Render(camera);
+	m_text->Render(10, 10);
 }
 
 void GameScreen1::Update(float deltaTime, SDL_Event e)
@@ -88,6 +89,13 @@ void GameScreen1::Update(float deltaTime, SDL_Event e)
 	if (camera->x < 0) { camera->x = 0; }
 	else if (camera->x > LEVEL_WIDTH - camera->w) { camera->x = LEVEL_WIDTH - camera->w; }
 
+	if (m_text != nullptr && score != old_score)
+	{
+		old_score = score;
+		m_text->LoadFont("Fonts/Pacifico.ttf", 40, scoreMessage + std::to_string(score), { 255, 255, 255 });
+	}
+
+
 }
 
 void GameScreen1::UpdatePowBlock()
@@ -133,6 +141,14 @@ bool GameScreen1::SetUpLevel()
 	m_background_yPos = 0.0f; 
 	new_enemy_timer = 5;
 	score = 0; 
+
+	m_text = new TextRenderer(m_renderer);
+
+	if (!m_text->LoadFont("Fonts/Pacifico.ttf", 40, scoreMessage + std::to_string(score), { 255, 255, 255 }))
+	{
+		std::cout << "Failed to load background texture!" << std::endl;
+		return false;
+	}
 	return false;
 }
 
