@@ -9,6 +9,7 @@ CharacterKoopa::CharacterKoopa(SDL_Renderer* renderer, std::string imagePath, Ve
 	m_alive = true; 
 	m_single_sprite_w = m_texture->GetWidth() / 2;
 	m_single_sprite_h = m_texture->GetHeight();
+	m_current_level_map = map;
 
 	m_source_rect = { 0, 0, m_texture->GetWidth(), m_texture->GetHeight() };
 	m_draw_rect = { 0, 0, m_texture->GetWidth(), m_texture->GetHeight() };
@@ -20,7 +21,14 @@ CharacterKoopa::~CharacterKoopa()
 
 void CharacterKoopa::Update(float deltaTime, SDL_Event e)
 {
-	AddGravity(deltaTime);
+	int centralX_position = (int)(m_position.x + (m_texture->GetWidth() * 0.5));
+	int foot_position = (int)(m_position.y + m_texture->GetHeight());
+
+	if (m_current_level_map->GetTileAt(foot_position, centralX_position) == 0)
+	{
+		AddGravity(deltaTime);
+	}
+	
 	if (!m_injured)
 	{
 		//enemy is not injured so move

@@ -37,11 +37,12 @@ public:
 	FACING m_facing_direction;
 	float m_movement_speed;
 private:
-	LevelMap* m_current_level_map;
+	
 protected:
 	SDL_Renderer* m_renderer;
 	Vector2D m_position; 
 	Texture2D* m_texture; 
+	LevelMap* m_current_level_map;
 
 	SDL_Rect m_source_rect; 
 	SDL_Rect m_draw_rect; 

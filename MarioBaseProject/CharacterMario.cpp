@@ -3,6 +3,7 @@ CharacterMario::CharacterMario(SDL_Renderer* renderer, std::string imagePath, Ve
 {
 	m_facing_direction = start_facing;
 	m_movement_speed = movement_speed;
+	m_current_level_map = map; 
 
 	m_source_rect = { 0, 0, m_texture->GetWidth(), m_texture->GetHeight() };
 	m_draw_rect = { 0, 0, m_texture->GetWidth(), m_texture->GetHeight() };
@@ -10,8 +11,24 @@ CharacterMario::CharacterMario(SDL_Renderer* renderer, std::string imagePath, Ve
 
 void CharacterMario::Update(float deltaTime, SDL_Event e)
 {
-	
-	AddGravity(deltaTime);
+	//collision position variables
+	int centralX_position = (int)(m_position.x + (m_texture->GetWidth() * 0.5));
+	int foot_position = (int)(m_position.y + m_texture->GetHeight());
+
+	bool yes; 
+	if (m_current_level_map->GetTileAt(foot_position, centralX_position) == 0)
+	{
+		AddGravity(deltaTime);
+		yes = true; 
+	}
+	else
+	{
+		//collided with ground so we can jump again
+		m_can_jump = true;
+		yes = false;
+	}
+
+	cout << yes << endl;
 
 	switch (e.type)
 	{

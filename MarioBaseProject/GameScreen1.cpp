@@ -10,8 +10,6 @@ GameScreen1::GameScreen1(SDL_Renderer* renderer): GameScreen(renderer)
 
 GameScreen1::~GameScreen1()
 {
-	delete m_background_texture;
-	m_background_texture = nullptr; 
 	delete mario;
 	mario = nullptr;
 	delete luigi; 
@@ -25,8 +23,7 @@ GameScreen1::~GameScreen1()
 
 void GameScreen1::Render()
 {
-	//draw the enemies
-	m_background_texture->Render(Vector2D(0, m_background_yPos), SDL_FLIP_NONE);
+	background->Render(camera);
 
 	for (int i = 0; i < m_enemies.size(); i++)
 	{
@@ -79,6 +76,18 @@ void GameScreen1::Update(float deltaTime, SDL_Event e)
 	{
 		//std::cout << "Circle hit!" << std::endl;
 	}
+
+	//for (int i = 0; i < MAP_HEIGHT; i++)
+	//{
+	//	for (int j = 0; j < MAP_WIDTH; j++)
+	//	{
+	//		//if (Collisions::Instance()->Box(mario->GetCollisionBox(), ))
+	//		//{
+	//		//	//std::cout << "Box hit!" << std::endl;
+	//		//}
+	//	}
+	//}
+
 	if (Collisions::Instance()->Box(mario->GetCollisionBox(), luigi->GetCollisionBox()))
 	{
 		//std::cout << "Box hit!" << std::endl;
@@ -119,13 +128,7 @@ bool GameScreen1::SetUpLevel()
 
 	camera = new SDL_Rect{ 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
 
-	m_background_texture = new Texture2D(m_renderer);
-	if (!m_background_texture->LoadFromFile("Images/Squiddy.jpg"))
-	{
-		std::cout << "Failed to load background texture!" << std::endl;
-		return false;
-	}
-
+	background = new Background(m_renderer, "Images/BackgroundMB.png", Vector2D(0, m_background_yPos));
 	mario = new CharacterMario(m_renderer, "Images/Mario.png", Vector2D(80, 100), m_level_map, FACING_RIGHT, MOVEMENTSPEED);
 	luigi = new CharacterLuigi(m_renderer, "Images/Luigi.png", Vector2D(60, 100), m_level_map, FACING_LEFT, MOVEMENTSPEED);
 	
@@ -154,7 +157,7 @@ bool GameScreen1::SetUpLevel()
 
 void GameScreen1::SetLevelMap()
 {
-	/*int map[MAP_HEIGHT][MAP_WIDTH] = { { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+	int map[MAP_HEIGHT][MAP_WIDTH] = { { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
 										{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 										{ 1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1},
 										{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -167,9 +170,9 @@ void GameScreen1::SetLevelMap()
 										{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 										{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 										{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1} };
-*/
 
-	ifstream inFile;
+
+	/*ifstream inFile;
 
 	inFile.open("Levels/Level1.txt");
 
@@ -190,7 +193,7 @@ void GameScreen1::SetLevelMap()
 		}
 	}
 
-	inFile.close();
+	inFile.close();*/
 
 	//clear any old maps
 	if (m_level_map != nullptr)
@@ -292,7 +295,7 @@ void GameScreen1::UpdateCoins(float deltaTime, SDL_Event e)
 
 		if (Collisions::Instance()->Circle(m_coins[i], mario))
 		{
-			score = +15; 
+			score += 15; 
 			m_coins[i]->SetAlive(false);
 		}
 

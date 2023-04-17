@@ -2,7 +2,9 @@
 #ifndef _GAMESCREEN1_H
 #define _GAMESCREEN1_H
 
+#
 #include "GameScreen.h"
+#include "Background.h"
 #include "Commons.h"
 #include "CharacterMario.h"
 #include "CharacterLuigi.h"
@@ -36,12 +38,12 @@ private:
 	bool SetUpLevel();
 	void SetLevelMap();
 
-	Texture2D* m_background_texture;
 	SDL_Rect* camera;
 	CharacterMario* mario;
 	CharacterLuigi* luigi; 
 	LevelMap* m_level_map; 
 	PowBlock* m_pow_block;
+	Background* background;
 	std::vector<CharacterKoopa*> m_enemies;
 	std::vector<CharacterCoin*> m_coins; 
 	bool m_screenshake;
