@@ -64,6 +64,39 @@ float Character::GetCollisionRadius()
 	return m_collision_radius; 
 }
 
+void Character::Collisions(float deltaTime)
+{
+	//collision position variables
+	int centralX_position = (int)(m_position.x + (m_texture->GetWidth() * 0.5)) / TILE_WIDTH;
+	int centralY_position = (int)(m_position.y + (m_texture->GetHeight() * 0.5)) / TILE_HEIGHT;
+
+	int foot_position = (int)(m_position.y + m_texture->GetHeight()) / TILE_HEIGHT;
+	int top_position = (int)(m_position.y) / TILE_HEIGHT;
+
+	int left_position = (int)(m_position.x + (m_texture->GetWidth() / LEVEL_WIDTH));
+
+	if (m_current_level_map->GetTileAt(foot_position, centralX_position) == 0) // DOWN!!
+	{
+		AddGravity(deltaTime);
+	}
+	else
+	{
+		//collided with ground so we can jump again
+		m_can_jump = true;
+	}
+
+	if (m_current_level_map->GetTileAt(top_position, centralX_position) == 1)
+	{
+		CancelJump();
+	}
+
+	if (m_current_level_map->GetTileAt(left_position, centralY_position) == 0) // DOWN!!
+	{
+		cout << "left" << endl;
+	}
+
+}
+
 void Character::MoveLeft(float deltaTime)
 {
 	m_position.x -= deltaTime * m_movement_speed;

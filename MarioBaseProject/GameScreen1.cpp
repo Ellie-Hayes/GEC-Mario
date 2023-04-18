@@ -43,21 +43,6 @@ void GameScreen1::Render()
 
 void GameScreen1::Update(float deltaTime, SDL_Event e)
 {
-	if (m_screenshake)
-	{
-		m_shake_time -= deltaTime;
-		m_wobble++;
-		m_background_yPos = sin(m_wobble);
-		m_background_yPos *= 3.0f;
-
-		//end shake after duration
-		if (m_shake_time <= 0.0f)
-		{
-			m_shake_time = false;
-			m_background_yPos = 0.0f;
-		}
-	}
-
 	new_enemy_timer -= deltaTime;
 	if (new_enemy_timer <= 0)
 	{
@@ -65,12 +50,14 @@ void GameScreen1::Update(float deltaTime, SDL_Event e)
 		new_enemy_timer = 5; 
 	}
 
+	background->Update(deltaTime);
 	mario->Update(deltaTime, e);
 	luigi->Update(deltaTime, e);
 
 	UpdatePowBlock();
 	UpdateEnemies(deltaTime, e);
 	UpdateCoins(deltaTime, e);
+	
 	
 	if (Collisions::Instance()->Circle(mario, luigi))
 	{
@@ -115,6 +102,7 @@ void GameScreen1::UpdatePowBlock()
 		if (mario->IsJumping())
 		{
 			DoScreenShake();
+			background->SetScreenShake();
 			m_pow_block->TakeHit();
 			mario->CancelJump();
 		}
@@ -128,7 +116,7 @@ bool GameScreen1::SetUpLevel()
 
 	camera = new SDL_Rect{ 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
 
-	background = new Background(m_renderer, "Images/BackgroundMB.png", Vector2D(0, m_background_yPos));
+	background = new Background(m_renderer, "Images/BackgroundMB.png", Vector2D(0, 0));
 	mario = new CharacterMario(m_renderer, "Images/Mario.png", Vector2D(80, 100), m_level_map, FACING_RIGHT, MOVEMENTSPEED);
 	luigi = new CharacterLuigi(m_renderer, "Images/Luigi.png", Vector2D(60, 100), m_level_map, FACING_LEFT, MOVEMENTSPEED);
 	
@@ -140,8 +128,6 @@ bool GameScreen1::SetUpLevel()
 	CreateCoin(Vector2D(250, 300));
 
 	m_pow_block = new PowBlock(m_renderer, m_level_map);
-	m_screenshake = false; 
-	m_background_yPos = 0.0f; 
 	new_enemy_timer = 5;
 	score = 0; 
 
@@ -157,8 +143,8 @@ bool GameScreen1::SetUpLevel()
 
 void GameScreen1::SetLevelMap()
 {
-	int map[MAP_HEIGHT][MAP_WIDTH] = { { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
-										{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+	int map[MAP_HEIGHT][MAP_WIDTH] = {  { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 },
+										{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,},
 										{ 1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1},
 										{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 										{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -166,34 +152,36 @@ void GameScreen1::SetLevelMap()
 										{ 1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1},
 										{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 										{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-										{ 1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1},
+										{ 1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0},
 										{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-										{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+										{ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0},
 										{ 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1} };
 
 
-	/*ifstream inFile;
+	//ifstream inFile;
 
-	inFile.open("Levels/Level1.txt");
+	//inFile.open("Levels/Level1.txt");
 
-	if (!inFile.good())
-	{
-		cerr << "Can't open text file " << endl;
-	}
+	//if (!inFile.good())
+	//{
+	//	cerr << "Can't open text file " << endl;
+	//}
 
-	int map[MAP_HEIGHT][MAP_WIDTH];
-	int tempNum;
+	//int map[MAP_HEIGHT][MAP_WIDTH];
+	//int tempNum;
 
-	for (int i = 0; i < MAP_HEIGHT; i++)
-	{
-		for (int j = 0; j < MAP_WIDTH; j++)
-		{
-			inFile >> tempNum;
-			map[i][j] = tempNum;
-		}
-	}
+	//for (int i = 0; i < MAP_HEIGHT; i++)
+	//{
+	//	for (int j = 0; j < MAP_WIDTH; j++)
+	//	{
+	//		inFile >> tempNum;
+	//		map[i][j] = tempNum;
+	//		cout << tempNum;
+	//	}
+	//}
 
-	inFile.close();*/
+	//inFile.close();
+
 
 	//clear any old maps
 	if (m_level_map != nullptr)
@@ -208,10 +196,6 @@ void GameScreen1::SetLevelMap()
 
 void GameScreen1::DoScreenShake()
 {
-	m_screenshake = true;
-	m_shake_time = SHAKE_DURATION;
-	m_wobble = 0.0f;
-
 	for (int i = 0; i < m_enemies.size(); i++)
 	{
 		m_enemies[i]->TakeDamage();

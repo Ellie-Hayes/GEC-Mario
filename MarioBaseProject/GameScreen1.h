@@ -46,10 +46,6 @@ private:
 	Background* background;
 	std::vector<CharacterKoopa*> m_enemies;
 	std::vector<CharacterCoin*> m_coins; 
-	bool m_screenshake;
-	float m_shake_time;
-	float m_wobble;
-	float m_background_yPos;
 	float new_enemy_timer; 
 	
 	TextRenderer* m_text;

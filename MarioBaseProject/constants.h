@@ -10,6 +10,8 @@
 
 #define MAP_HEIGHT 13
 #define MAP_WIDTH 32
+#define TILE_WIDTH 32
+#define TILE_HEIGHT 32
 #define LEVEL_WIDTH 1024
 #define LEVEL_HEIGHT 416
 #define SHAKE_DURATION 0.25

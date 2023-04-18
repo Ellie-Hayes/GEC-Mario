@@ -56,6 +56,7 @@ protected:
 	virtual void MoveRight(float deltaTime);
 	virtual void AddGravity(float deltaTime);
 	virtual void SetMovingAndJump(float deltaTime);
+	virtual void Collisions(float deltaTime);
 
 	bool m_jumping;
 	bool m_can_jump;

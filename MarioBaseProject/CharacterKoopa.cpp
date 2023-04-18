@@ -21,13 +21,7 @@ CharacterKoopa::~CharacterKoopa()
 
 void CharacterKoopa::Update(float deltaTime, SDL_Event e)
 {
-	int centralX_position = (int)(m_position.x + (m_texture->GetWidth() * 0.5));
-	int foot_position = (int)(m_position.y + m_texture->GetHeight());
-
-	if (m_current_level_map->GetTileAt(foot_position, centralX_position) == 0)
-	{
-		AddGravity(deltaTime);
-	}
+	Collisions(deltaTime);
 	
 	if (!m_injured)
 	{

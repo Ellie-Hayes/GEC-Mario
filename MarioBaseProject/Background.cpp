@@ -12,6 +12,8 @@ Background::Background(SDL_Renderer* renderer, std::string imagePath, Vector2D s
 
 	m_source_rect = { 0, 0, m_texture->GetWidth(), m_texture->GetHeight() };
 	m_draw_rect = { 0, 0, m_texture->GetWidth(), m_texture->GetHeight() };
+
+	m_shake_time = SHAKE_DURATION;
 }
 
 Background::~Background()
@@ -26,3 +28,24 @@ void Background::Render(SDL_Rect* camera_rect)
 
 	m_texture->Render(m_source_rect, m_draw_rect, SDL_FLIP_NONE);
 }
+
+void Background::Update(float deltaTime)
+{
+	if (m_screenshake)
+	{
+		m_shake_time -= deltaTime;
+		m_wobble++;
+		m_position.y = sin(m_wobble);
+		m_position.y *= 3.0f;
+
+		//end shake after duration
+		if (m_shake_time <= 0.0f)
+		{
+			m_shake_time = false;
+			m_position.y = 0.0f;
+			m_screenshake = false; 
+			m_shake_time = SHAKE_DURATION; 
+		}
+	}
+}
+

@@ -13,18 +13,8 @@ CharacterLuigi::CharacterLuigi(SDL_Renderer* renderer, std::string imagePath, Ve
 void CharacterLuigi::Update(float deltaTime, SDL_Event e)
 {
 
-	int centralX_position = (int)(m_position.x + (m_texture->GetWidth() * 0.5));
-	int foot_position = (int)(m_position.y + m_texture->GetHeight());
+	Collisions(deltaTime);
 
-	if (m_current_level_map->GetTileAt(foot_position, centralX_position) == 0)
-	{
-		AddGravity(deltaTime);
-	}
-	else
-	{
-		//collided with ground so we can jump again
-		m_can_jump = true;
-	}
 
 	switch (e.type)
 	{
