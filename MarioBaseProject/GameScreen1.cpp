@@ -168,15 +168,16 @@ void GameScreen1::SetLevelMap()
 	//}
 
 	//int map[MAP_HEIGHT][MAP_WIDTH];
-	//int tempNum;
 
 	//for (int i = 0; i < MAP_HEIGHT; i++)
 	//{
 	//	for (int j = 0; j < MAP_WIDTH; j++)
 	//	{
-	//		inFile >> tempNum;
-	//		map[i][j] = tempNum;
-	//		cout << tempNum;
+	//		inFile >> mapHI[i][j];
+	//		map[i][j] = mapHI[i][j];
+
+	//		cout << i << " " << j << endl; 
+	//		cout << mapHI[i][j] < endl;
 	//	}
 	//}
 

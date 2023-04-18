@@ -92,7 +92,7 @@ void Character::Collisions(float deltaTime)
 
 	if (m_current_level_map->GetTileAt(left_position, centralY_position) == 0) // DOWN!!
 	{
-		cout << "left" << endl;
+		//cout << "left" << endl;
 	}
 
 }
