@@ -14,6 +14,7 @@ public:
 private:
 protected:
 	SDL_Renderer* m_renderer; 
+	
 };
 
 #endif

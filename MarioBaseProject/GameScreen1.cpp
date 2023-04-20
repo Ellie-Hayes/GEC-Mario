@@ -39,6 +39,11 @@ void GameScreen1::Render()
 	luigi->Render(camera);
 	m_pow_block->Render(camera);
 	m_text->Render(10, 10);
+
+	for (int i = 0; i < m_tiles.size(); i++)
+	{
+		m_tiles[i]->Render(camera);
+	}
 }
 
 void GameScreen1::Update(float deltaTime, SDL_Event e)
@@ -135,7 +140,7 @@ bool GameScreen1::SetUpLevel()
 
 	if (!m_text->LoadFont("Fonts/Pacifico.ttf", 40, scoreMessage + std::to_string(score), { 255, 255, 255 }))
 	{
-		std::cout << "Failed to load background texture!" << std::endl;
+		std::cout << "Failed to load font texture!" << std::endl;
 		return false;
 	}
 	return false;
@@ -161,10 +166,22 @@ void GameScreen1::SetLevelMap()
 		{
 			inFile >> inlalala; 
 			map[i][j] = inlalala; 
+
+			if (inlalala == 1)
+			{
+				int xPos = j * TILE_WIDTH;
+				int yPos = i * TILE_HEIGHT;
+
+				Tile* tile = new Tile(m_renderer, "Tiles/Bricks.png", Vector2D(xPos, yPos));
+				m_tiles.push_back(tile);
+			}
+
 		}
 	}
 
 	inFile.close();
+
+
 
 
 	//clear any old maps
@@ -244,8 +261,6 @@ void GameScreen1::UpdateEnemies(float deltaTime, SDL_Event e)
 	}
 }
 
-
-
 void GameScreen1::CreateKoopa(Vector2D position, FACING direction, float speed)
 {
 	std::cout << "Made koopa" << std::endl;
@@ -287,3 +302,5 @@ void GameScreen1::CreateCoin(Vector2D position)
 	CharacterCoin* coin = new CharacterCoin(m_renderer, "Images/Coin.png", position, m_level_map, FACING_LEFT, 0);
 	m_coins.push_back(coin);
 }
+
+

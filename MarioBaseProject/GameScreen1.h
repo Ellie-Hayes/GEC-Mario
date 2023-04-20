@@ -14,6 +14,7 @@
 #include "Character.h"
 #include "LevelMap.h"
 #include "PowBlock.h"
+#include "Tile.h"
 #include "TextRenderer.h"
 #include <vector>
 
@@ -46,6 +47,7 @@ private:
 	Background* background;
 	std::vector<CharacterKoopa*> m_enemies;
 	std::vector<CharacterCoin*> m_coins; 
+	std::vector<Tile*> m_tiles;
 	float new_enemy_timer; 
 	
 	TextRenderer* m_text;
@@ -58,8 +60,7 @@ private:
 	void CreateKoopa(Vector2D position, FACING direction, float speed);
 	void UpdateCoins(float deltaTime, SDL_Event e);
 	void CreateCoin(Vector2D position);
-
-
+	
 	
 protected:
 	
