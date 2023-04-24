@@ -19,8 +19,9 @@ public:
 	void ChangeTileAt(unsigned int row, unsigned int column, unsigned int new_value);
 	void LoadLevelMap(std::string path);
 
-private:
 	int** m_map;
+protected:
+	
 
 };
 

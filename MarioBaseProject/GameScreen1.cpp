@@ -25,6 +25,11 @@ void GameScreen1::Render()
 {
 	background->Render(camera);
 
+	for (int i = 0; i < m_decoTiles.size(); i++)
+	{
+		m_decoTiles[i]->Render(camera);
+	}
+
 	for (int i = 0; i < m_enemies.size(); i++)
 	{
 		m_enemies[i]->Render(camera);
@@ -69,24 +74,12 @@ void GameScreen1::Update(float deltaTime, SDL_Event e)
 		//std::cout << "Circle hit!" << std::endl;
 	}
 
-	//for (int i = 0; i < MAP_HEIGHT; i++)
-	//{
-	//	for (int j = 0; j < MAP_WIDTH; j++)
-	//	{
-	//		//if (Collisions::Instance()->Box(mario->GetCollisionBox(), ))
-	//		//{
-	//		//	//std::cout << "Box hit!" << std::endl;
-	//		//}
-	//	}
-	//}
-
 	if (Collisions::Instance()->Box(mario->GetCollisionBox(), luigi->GetCollisionBox()))
 	{
 		//std::cout << "Box hit!" << std::endl;
 	}
 	
 	camera->x = mario->GetPosition().x - SCREEN_WIDTH / 2;
-	//camera -> x = 100; 
 	if (camera->x < 0) { camera->x = 0; }
 	else if (camera->x > LEVEL_WIDTH - camera->w) { camera->x = LEVEL_WIDTH - camera->w; }
 
@@ -117,20 +110,19 @@ void GameScreen1::UpdatePowBlock()
 
 bool GameScreen1::SetUpLevel()
 {
+	levelPalette = "Tiles/Grass/";
+	srand(time(NULL));
 	SetLevelMap();
 
 	camera = new SDL_Rect{ 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
 
 	background = new Background(m_renderer, "Images/BackgroundMB.png", Vector2D(0, 0));
-	mario = new CharacterMario(m_renderer, "Images/Mario.png", Vector2D(80, 100), m_level_map, FACING_RIGHT, MOVEMENTSPEED);
-	luigi = new CharacterLuigi(m_renderer, "Images/Luigi.png", Vector2D(60, 100), m_level_map, FACING_LEFT, MOVEMENTSPEED);
+	mario = new CharacterMario(m_renderer, "Images/Characters/PlayerTest.png", Vector2D(80, 100), m_level_map, FACING_RIGHT, MOVEMENTSPEED);
+	luigi = new CharacterLuigi(m_renderer, "Images/Characters/CatTest.png", Vector2D(60, 100), m_level_map, FACING_LEFT, MOVEMENTSPEED);
+	
 	
 	CreateKoopa(Vector2D(80, 100), FACING_RIGHT, KOOPA_SPEED);
 	CreateKoopa(Vector2D(100, 200), FACING_LEFT, KOOPA_SPEED);
-
-	CreateCoin(Vector2D(150, 300));
-	CreateCoin(Vector2D(200, 300));
-	CreateCoin(Vector2D(250, 300));
 
 	m_pow_block = new PowBlock(m_renderer, m_level_map);
 	new_enemy_timer = 5;
@@ -158,29 +150,63 @@ void GameScreen1::SetLevelMap()
 	}
 
 	int map[MAP_HEIGHT][MAP_WIDTH];
-	int inlalala; 
+	int inNumber; 
 
 	for (int i = 0; i < MAP_HEIGHT; i++)
 	{
 		for (int j = 0; j < MAP_WIDTH; j++)
 		{
-			inFile >> inlalala; 
-			map[i][j] = inlalala; 
-
-			if (inlalala == 1)
+			inFile >> inNumber;
+			map[i][j] = inNumber;
+			
+			if (inNumber == 0)
 			{
-				int xPos = j * TILE_WIDTH;
-				int yPos = i * TILE_HEIGHT;
+				int randomChance = rand() % 101;
+				if (randomChance > 99)
+				{
+					PaintDecoTile(Vector2D(j, i), ("Tiles/Misc/Torch.png"));
+				}
+			} //Randomly place torches
 
-				Tile* tile = new Tile(m_renderer, "Tiles/Bricks.png", Vector2D(xPos, yPos));
-				m_tiles.push_back(tile);
+			switch (inNumber)
+			{
+
+			case 1:
+				wallPositions.push_back(Vector2D(j, i));
+				break;
+			case 2:
+				waterPositions.push_back(Vector2D(j, i));
+				break;
+			case 3:
+				lavaPositions.push_back(Vector2D(j, i));
+				break;
+			case 4:
+				PaintDecoTile(Vector2D(j, i), "Tiles/Misc/Ladder.png");
+				break;
+			case 5:
+				PaintTile(Vector2D(j, i), "Tiles/Misc/PlatSupportL.png");
+				break;
+			case 6:
+				PaintTile(Vector2D(j, i), "Tiles/Misc/PlatSupportR.png");
+				break;
+			case 7:
+				PaintTile(Vector2D(j, i), "Tiles/Misc/PlatMiddle.png");
+				break;
+			case 8:
+				PaintTile(Vector2D(j, i), "Tiles/Misc/Torch.png");
+				break;
+			case 9:
+				CreateCoin(Vector2D(j, i));
+				break;
+			default:
+				break;
 			}
-
+			
 		}
 	}
 
 	inFile.close();
-
+	
 
 
 
@@ -193,7 +219,297 @@ void GameScreen1::SetLevelMap()
 	//set the new one
 	m_level_map = new LevelMap(map);
 
+	//Set walls
+	Set8BitTileNeighbours(wallPositions, 1);
+	Set4BitTileNeighbours(waterPositions, 2);
+	Set4BitTileNeighbours(lavaPositions, 3);
 }
+
+void GameScreen1::Set8BitTileNeighbours(std::vector<Vector2D>& passedVector, int typeCheck )
+{
+	direction2D = new Direction2D();
+
+	for (int i = 0; i < passedVector.size(); i++)
+	{
+		std::string neighbourBinaryPositions = "";
+		for (Vector2D TilePos : direction2D->eightDirectionList) {
+			int neighbourXpos = passedVector[i].x + TilePos.x;
+			int neighbourYpos = passedVector[i].y + TilePos.y;
+
+			if (neighbourXpos < 0 || neighbourXpos > MAP_WIDTH || neighbourYpos < 0 || neighbourYpos > MAP_HEIGHT - 1) { neighbourBinaryPositions += '0'; }
+			else
+			{
+				if (m_level_map->m_map[neighbourYpos][neighbourXpos] == typeCheck) { neighbourBinaryPositions += '1'; }
+				else { neighbourBinaryPositions += '0'; }
+			}
+		}
+
+		CreateTiles(Vector2D(passedVector[i].x, passedVector[i].y), neighbourBinaryPositions);
+		
+	}
+
+	delete direction2D;
+}
+
+void GameScreen1::Set4BitTileNeighbours(std::vector<Vector2D>& passedVector, int typeCheck)
+{
+	direction2D = new Direction2D();
+
+	for (int i = 0; i < passedVector.size(); i++)
+	{
+		std::string neighbourBinaryPositions = "";
+		for (Vector2D TilePos : direction2D->cardinalDirectionList) {
+			int neighbourXpos = passedVector[i].x + TilePos.x;
+			int neighbourYpos = passedVector[i].y + TilePos.y;
+
+			if (neighbourXpos < 0 || neighbourXpos > MAP_WIDTH || neighbourYpos < 0 || neighbourYpos > MAP_HEIGHT - 1) { neighbourBinaryPositions += '0'; }
+			else
+			{
+				if (m_level_map->m_map[neighbourYpos][neighbourXpos] == typeCheck) { neighbourBinaryPositions += '1'; }
+				else { neighbourBinaryPositions += '0'; }
+			}
+		}
+
+		switch (typeCheck)
+		{
+		case 2:
+			CreateWaterLavaTiles(Vector2D(passedVector[i].x, passedVector[i].y), neighbourBinaryPositions, "Tiles/Water/");
+			break;
+		case 3:
+			CreateWaterLavaTiles(Vector2D(passedVector[i].x, passedVector[i].y), neighbourBinaryPositions, "Tiles/Lava/");
+			break;
+		default:
+			break;
+		}
+
+	}
+
+	delete direction2D;
+}
+
+void GameScreen1::CreateTiles(Vector2D position, std::string binaryType)
+{
+	WallBinaryTypes* wallBinaryTileTypes = new WallBinaryTypes();
+	bool typeChosen = false; 
+	stringstream s;
+
+	//Main 
+	for (std::string type : wallBinaryTileTypes->wallTop) {
+		if (binaryType == type) {
+			s << levelPalette << "WallTop.png";
+			PaintTile(position, s.str().c_str()); typeChosen = true;
+
+			int randomChance = rand() % 101;
+			if (randomChance > 80)
+			{
+				Vector2D paintPosition = Vector2D(position.x, position.y - 1);
+				PaintTile(paintPosition, ("Tiles/Grass/Grass.png")); 
+			}
+
+			delete wallBinaryTileTypes;
+			return; 
+		}
+	}
+	for (std::string type : wallBinaryTileTypes->wallRight) {
+		if (binaryType == type) { 
+			s << levelPalette << "WallRight.png";
+			PaintTile(position, s.str().c_str()); typeChosen = true;
+
+			delete wallBinaryTileTypes;
+			return;
+		}
+	}
+	for (std::string type : wallBinaryTileTypes->wallBottom) {
+		if (binaryType == type) { 
+			s << levelPalette << "WallBottom.png";
+			PaintTile(position, s.str().c_str()); typeChosen = true;
+		
+			int randomChance = rand() % 101;
+			if (randomChance > 80)
+			{
+				Vector2D paintPosition = Vector2D(position.x, position.y + 1);
+				int vineType = rand() % 3;
+
+				switch (vineType)
+				{
+				case 1:
+					PaintTile(paintPosition, ("Tiles/Grass/Vine1.png"));
+					break; 
+				case 2: 
+					PaintTile(paintPosition, ("Tiles/Grass/Vine2.png"));
+					break;
+				default:
+					break;
+				}
+				
+			}
+
+			delete wallBinaryTileTypes;
+			return;
+		}
+	}
+	for (std::string type : wallBinaryTileTypes->wallLeft) {
+		if (binaryType == type) {
+			s << levelPalette << "WallLeft.png";
+			PaintTile(position, s.str().c_str()); typeChosen = true;
+
+			delete wallBinaryTileTypes;
+			return;
+		}
+	}
+	for (std::string type : wallBinaryTileTypes->wallFull) {
+		if (binaryType == type) { 
+			s << levelPalette << "WallFull.png";
+			PaintTile(position, s.str().c_str()); typeChosen = true;	 
+		
+			delete wallBinaryTileTypes;
+			return;
+		}
+	}
+
+
+	//Corner
+	for (std::string type : wallBinaryTileTypes->wallCornerLeftTop) {
+		if (binaryType == type) { 
+			s << levelPalette << "WallCornerBottomRight.png";
+			PaintTile(position, s.str().c_str()); typeChosen = true; 
+		
+			delete wallBinaryTileTypes;
+			return;
+		}
+	}
+	for (std::string type : wallBinaryTileTypes->wallCornerRightTop) {
+		if (binaryType == type) { 
+			s << levelPalette << "WallCornerBottomLeft.png";
+			PaintTile(position, s.str().c_str()); typeChosen = true; 
+		
+			delete wallBinaryTileTypes;
+			return;
+		}
+	}
+	for (std::string type : wallBinaryTileTypes->wallCornerLeftBottom) {
+		if (binaryType == type) { 
+			s << levelPalette << "WallCornerLeftBottom.png";
+			PaintTile(position, s.str().c_str()); typeChosen = true; 
+		
+			delete wallBinaryTileTypes;
+			return;
+		}
+	}
+	for (std::string type : wallBinaryTileTypes->wallCornerRightBottom) {
+		if (binaryType == type) { 
+			s << levelPalette << "WallCornerRightBottom.png";
+			PaintTile(position, s.str().c_str()); typeChosen = true; 
+		
+			delete wallBinaryTileTypes;
+			return;
+		}
+	}
+
+
+	//Diagonals
+	for (std::string type : wallBinaryTileTypes->wallDiagonalLeftBottom) {
+		if (binaryType == type) { 
+			s << levelPalette << "WallDiagonalCornerBottomLeft.png";
+			PaintTile(position, s.str().c_str()); typeChosen = true;
+		
+			delete wallBinaryTileTypes;
+			return;
+		}
+	}
+	for (std::string type : wallBinaryTileTypes->wallDiagonalLeftTop) {
+		if (binaryType == type) { 
+			s << levelPalette << "WallDiagonalCornerTopLeft.png";
+			PaintTile(position, s.str().c_str()); typeChosen = true; 
+		
+			delete wallBinaryTileTypes;
+			return;
+		}
+	}
+	for (std::string type : wallBinaryTileTypes->wallDiagonalRightBottom) {
+		if (binaryType == type) { 
+			s << levelPalette << "WallDiagonalCornerBottomRight.png";
+			PaintTile(position, s.str().c_str()); typeChosen = true; 
+		
+			delete wallBinaryTileTypes;
+			return;
+		}
+	}
+	for (std::string type : wallBinaryTileTypes->wallDiagonalRightTop) {
+		if (binaryType == type) { 
+			s << levelPalette << "WallDiagonalCornerTopRight.png";
+			PaintTile(position, s.str().c_str()); typeChosen = true;
+		
+			delete wallBinaryTileTypes;
+			return;
+		}
+	}
+
+
+	if (!typeChosen) { std::cout << "Tile at (" << position.x << ", " << position.y << ") has type: " << binaryType << std::endl;  PaintTile(position, "Tiles/Test/ErrorTile.png"); }
+
+}
+
+void GameScreen1::CreateWaterLavaTiles(Vector2D position, std::string binaryType, std::string palette)
+{
+	FourBitBinaryTypes* fourBitTypes =  new FourBitBinaryTypes(); 
+	bool typeChosen = false;
+	stringstream s;
+
+
+	for (std::string type : fourBitTypes->BitStart) {
+		if (binaryType == type) {
+			s << palette << "Start.png";
+			PaintTile(position, s.str().c_str()); typeChosen = true;
+		}
+	}
+
+	for (std::string type : fourBitTypes->BitMiddle) {
+		if (binaryType == type) {
+			s << palette << "Middle.png";
+			PaintTile(position, s.str().c_str()); typeChosen = true;
+		}
+	}
+
+	for (std::string type : fourBitTypes->BitTop) {
+		if (binaryType == type) {
+			s << palette << "Top.png";
+			PaintTile(position, s.str().c_str()); typeChosen = true;
+		}
+	}
+
+	for (std::string type : fourBitTypes->BitFull) {
+		if (binaryType == type) {
+			s << palette << "Full.png";
+			PaintTile(position, s.str().c_str()); typeChosen = true;
+		}
+	}
+
+	if (!typeChosen) { std::cout << "Tile at (" << position.x << ", " << position.y << ") has type: " << binaryType << std::endl;  PaintTile(position, "Tiles/Test/ErrorTile.png"); }
+
+	delete fourBitTypes; 
+}
+
+void GameScreen1::PaintTile(Vector2D position, std::string filePath)
+{
+	
+	int xPos = position.x * TILE_WIDTH;
+	int yPos = position.y * TILE_HEIGHT;
+
+	Tile* tile = new Tile(m_renderer, filePath, Vector2D(xPos, yPos));
+	m_tiles.push_back(tile);
+} //Above player
+
+void GameScreen1::PaintDecoTile(Vector2D position, std::string filePath)
+{
+
+	int xPos = position.x * TILE_WIDTH;
+	int yPos = position.y * TILE_HEIGHT;
+
+	Tile* tile = new Tile(m_renderer, filePath, Vector2D(xPos, yPos));
+	m_decoTiles.push_back(tile);
+} 
+
 
 void GameScreen1::DoScreenShake()
 {
@@ -298,8 +614,11 @@ void GameScreen1::UpdateCoins(float deltaTime, SDL_Event e)
 
 void GameScreen1::CreateCoin(Vector2D position)
 {
+	int xPos = position.x * TILE_WIDTH;
+	int yPos = position.y * TILE_HEIGHT;
+
 	std::cout << "Made coin" << std::endl;
-	CharacterCoin* coin = new CharacterCoin(m_renderer, "Images/Coin.png", position, m_level_map, FACING_LEFT, 0);
+	CharacterCoin* coin = new CharacterCoin(m_renderer, "Images/Coin.png", Vector2D(xPos, yPos), m_level_map, FACING_LEFT, 0);
 	m_coins.push_back(coin);
 }
 

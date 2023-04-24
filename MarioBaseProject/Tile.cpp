@@ -10,8 +10,6 @@ Tile::Tile(SDL_Renderer* renderer, std::string path, Vector2D startPosition)
 		std::cout << "Failed to load texture!" << std::endl;
 	}
 
-	std::cout << "tile made" << std::endl; 
-
 	m_source_rect = { 0, 0, TILE_WIDTH, TILE_HEIGHT };
 	m_draw_rect = { 0, 0, TILE_WIDTH, TILE_HEIGHT };
 }
