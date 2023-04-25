@@ -87,6 +87,7 @@ struct WallBinaryTypes
         "01110111",
         "00000100",
         "11110010",
+        "10110011",
     };
 
     std::list<std::string> wallRight =
@@ -106,6 +107,12 @@ struct WallBinaryTypes
        "11001100",
        "10001010",
        "10001110",
+       "10011010",
+       "10011011",
+       "01001100",
+       "11011110",
+       "10010001",
+       "01001010",
     };
 
     std::list<std::string> wallBottom =
@@ -141,6 +148,9 @@ struct WallBinaryTypes
         "10111000",
         "10011101",
         "10001000",
+        "10101100",
+        "11101100",
+        "10101101",
     };
 
     std::list<std::string> wallFull =
@@ -203,6 +213,8 @@ struct WallBinaryTypes
         "01011100",
         "01110100",
         "00001000",
+        "01011001",
+        "00011001",
     };
 
     std::list<std::string> wallCornerRightTop =
@@ -226,6 +238,7 @@ struct WallBinaryTypes
         "01000011",
         "10000100",
         "11010110",
+        "01000110",
     };
 
     std::list<std::string> wallCornerRightBottom =
@@ -283,6 +296,7 @@ struct WallBinaryTypes
        "00111011",
        "10101011",
        "10111010",
+       "01111010",
     };
 
     std::list<std::string> wallDiagonalRightTop =
@@ -331,6 +345,7 @@ struct FourBitBinaryTypes
         "0111",
         "0011",
         "0001",
+        "0100",
     };
     
 };
