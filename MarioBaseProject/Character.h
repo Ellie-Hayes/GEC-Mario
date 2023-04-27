@@ -48,6 +48,8 @@ protected:
 	SDL_Rect m_draw_rect; 
 	float m_collision_radius;
 
+	bool can_move_left;
+	bool can_move_right; 
 	bool m_moving_left;
 	bool m_moving_right;
 	bool m_alive;

@@ -74,6 +74,20 @@ void GameScreen1::Update(float deltaTime, SDL_Event e)
 		//std::cout << "Circle hit!" << std::endl;
 	}
 
+	for (int i = 0; i < m_enemies.size(); i++)
+	{
+		if (Collisions::Instance()->Box(mario->GetCollisionBox(), m_enemies[i]->GetCollisionBox()))
+		{
+			if (mario->GetPosition().y <= m_enemies[i]->GetPosition().y - 24)
+			{
+				m_enemies[i]->SetAlive(false);
+			}
+			else
+			{
+				//TAKE DAMAGE MARIO XOXO
+			}
+		}
+	}
 	if (Collisions::Instance()->Box(mario->GetCollisionBox(), luigi->GetCollisionBox()))
 	{
 		//std::cout << "Box hit!" << std::endl;

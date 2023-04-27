@@ -6,7 +6,8 @@ Character::Character(SDL_Renderer* renderer, std::string imagePath, Vector2D sta
 	m_facing_direction = start_facing; 
 	m_moving_left = false;
 	m_moving_right = false; 
-
+	can_move_left = false;
+	can_move_right = false;
 	m_collision_radius = 15.0f;
 
 	m_texture = new Texture2D(m_renderer);
@@ -73,27 +74,27 @@ void Character::Collisions(float deltaTime)
 	int foot_position = (int)(m_position.y + m_texture->GetHeight()) / TILE_HEIGHT;
 	int top_position = (int)(m_position.y) / TILE_HEIGHT;
 
-	int left_position = (int)(m_position.x + (m_texture->GetWidth() / LEVEL_WIDTH));
+	int left_position = (int)(m_position.x / TILE_WIDTH);
+	int right_position = (int)((m_position.x + m_texture->GetWidth()) / TILE_WIDTH);
 
-	if (m_current_level_map->GetTileAt(foot_position, centralX_position) == 0) // DOWN!!
-	{
-		AddGravity(deltaTime);
-	}
-	else
-	{
-		//collided with ground so we can jump again
-		m_can_jump = true;
-	}
+	int lowerY_position = (int)(m_position.y + (m_texture->GetHeight() * 0.7)) / TILE_HEIGHT;
+	
+	//DOWN
+	if (m_current_level_map->GetTileAt(foot_position, centralX_position) != 1) { AddGravity(deltaTime); }
+	else { m_can_jump = true; }
 
-	if (m_current_level_map->GetTileAt(top_position, centralX_position) == 1)
-	{
-		CancelJump();
-	}
+	//UP
+	if (m_current_level_map->GetTileAt(top_position, centralX_position) == 1) { CancelJump(); }
 
-	if (m_current_level_map->GetTileAt(left_position, centralY_position) == 0) // DOWN!!
-	{
-		//cout << "left" << endl;
-	}
+	//LEFT 
+	if (m_current_level_map->GetTileAt(centralY_position, left_position) == 1) { can_move_left = false; }
+	else if (m_current_level_map->GetTileAt(lowerY_position, left_position) == 1) { can_move_left = false; }
+	else { can_move_left = true; }
+	
+	//RIGHT
+	if (m_current_level_map->GetTileAt(centralY_position, right_position) == 1) { can_move_right = false; }
+	else if(m_current_level_map->GetTileAt(lowerY_position, right_position) == 1) { can_move_right = false; }
+	else { can_move_right = true; }
 
 }
 
@@ -139,11 +140,11 @@ void Character::SetMovingAndJump(float deltaTime)
 			m_jumping = false;
 	}
 
-	if (m_moving_left)
+	if (m_moving_left && can_move_left)
 	{
 		MoveLeft(deltaTime);
 	}
-	else if (m_moving_right)
+	else if (m_moving_right && can_move_right)
 	{
 		MoveRight(deltaTime);
 	}
