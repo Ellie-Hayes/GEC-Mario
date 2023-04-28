@@ -17,6 +17,8 @@
 #include "Tile.h"
 #include "TileTypes.h"
 #include "TextRenderer.h"
+#include "UIHealth.h"
+
 #include <vector>
 #include <unordered_set>  
 #include <sstream>
@@ -79,6 +81,9 @@ private:
 	std::vector<Vector2D> lavaPositions;
 	std::vector<Vector2D> platformPositions;
 	std::string levelPalette; 
+
+	UIHealth* marioHealth;
+	UIHealth* luigiHealth; 
 	
 protected:
 	

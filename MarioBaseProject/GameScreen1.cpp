@@ -49,6 +49,9 @@ void GameScreen1::Render()
 	{
 		m_tiles[i]->Render(camera);
 	}
+
+	marioHealth->Render(); 
+	luigiHealth->Render();
 }
 
 void GameScreen1::Update(float deltaTime, SDL_Event e)
@@ -118,7 +121,6 @@ void GameScreen1::UpdatePowBlock()
 			m_pow_block->TakeHit();
 			mario->CancelJump();
 		}
-
 	}
 }
 
@@ -149,6 +151,9 @@ bool GameScreen1::SetUpLevel()
 		std::cout << "Failed to load font texture!" << std::endl;
 		return false;
 	}
+
+	marioHealth = new UIHealth(m_renderer, "Images/Characters/UIPlayer.png", Vector2D(10, 10));
+	luigiHealth = new UIHealth(m_renderer, "Images/Characters/UICat.png", Vector2D(SCREEN_WIDTH - 402, 10));
 	return false;
 }
 
