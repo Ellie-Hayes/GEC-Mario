@@ -64,9 +64,11 @@ private:
 	std::vector<Tile*> m_decoTiles;
 	float new_enemy_timer; 
 	
-	TextRenderer* m_text;
+	TextRenderer* m_mario_text;
+	TextRenderer* m_luigi_text;
 	string scoreMessage;
-	int score; 
+	int mario_score;
+	int luigi_score;
 	int old_score; 
 
 	void DoScreenShake();

@@ -32,7 +32,7 @@ public:
 
 	bool GetAlive() { return m_alive; }
 	void SetAlive(bool isAlive) { m_alive = isAlive; }
-	
+	void Knockback(int direction);
 
 	FACING m_facing_direction;
 	float m_movement_speed;
@@ -53,6 +53,8 @@ protected:
 	bool m_moving_left;
 	bool m_moving_right;
 	bool m_alive;
+	bool m_is_knockedBack;
+	int knockback_directon;
 
 	virtual void MoveLeft(float deltaTime);
 	virtual void MoveRight(float deltaTime);
@@ -63,8 +65,9 @@ protected:
 	bool m_jumping;
 	bool m_can_jump;
 	float m_jump_force;
+	float m_knockback_force;
 
-	virtual void Jump();
+	virtual void Jump(int forceAmount);
 
 };
 

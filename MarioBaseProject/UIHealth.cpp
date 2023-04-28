@@ -32,3 +32,12 @@ void UIHealth::Render()
 	m_texture->Render(portion_of_sprite, destRect, SDL_FLIP_NONE);
 
 }
+
+void UIHealth::TakeDamage()
+{
+	m_health -= 1;
+	if (m_health < 0)
+	{
+		m_health = 0; 
+	}
+}

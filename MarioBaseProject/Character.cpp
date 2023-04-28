@@ -9,7 +9,7 @@ Character::Character(SDL_Renderer* renderer, std::string imagePath, Vector2D sta
 	can_move_left = false;
 	can_move_right = false;
 	m_collision_radius = 15.0f;
-
+	m_knockback_force = 300;
 	m_texture = new Texture2D(m_renderer);
 	if (!m_texture->LoadFromFile(imagePath))
 	{
@@ -65,6 +65,28 @@ float Character::GetCollisionRadius()
 	return m_collision_radius; 
 }
 
+void Character::Knockback(int direction)
+{
+	switch (direction)
+	{
+	case 0: 
+		Jump(INITIAL_JUMP_FORCE);
+		break;
+	case 1:
+		m_is_knockedBack = true;
+		Jump(INITIAL_KNOCKBACK_FORCE);
+		break;
+	case -1:
+		m_is_knockedBack = true;
+		Jump(INITIAL_KNOCKBACK_FORCE);
+		break;
+	default:
+		break;
+	}
+
+	knockback_directon = direction; 
+}
+
 void Character::Collisions(float deltaTime)
 {
 	//collision position variables
@@ -81,7 +103,7 @@ void Character::Collisions(float deltaTime)
 	
 	//DOWN
 	if (m_current_level_map->GetTileAt(foot_position, centralX_position) != 1) { AddGravity(deltaTime); }
-	else { m_can_jump = true; }
+	else { m_can_jump = true; m_is_knockedBack = false; }
 
 	//UP
 	if (m_current_level_map->GetTileAt(top_position, centralX_position) == 1) { CancelJump(); }
@@ -115,7 +137,6 @@ void Character::AddGravity(float deltaTime)
 	
 	if (m_position.y > SCREEN_HEIGHT - m_texture->GetHeight())
 	{
-		//m_position.y = SCREEN_HEIGHT - m_texture->GetHeight();
 		m_can_jump = true; 
 	}
 	else
@@ -149,15 +170,19 @@ void Character::SetMovingAndJump(float deltaTime)
 		MoveRight(deltaTime);
 	}
 
+	if (m_is_knockedBack)
+	{
+		m_position.x += m_knockback_force * knockback_directon * deltaTime; 
+	}
 
 }
 
-void Character::Jump()
+void Character::Jump(int forceAmount)
 {
 	if (!m_jumping)
 	{
 		m_can_jump = false;
-		m_jump_force = INITIAL_JUMP_FORCE; m_jumping = true;
+		m_jump_force = forceAmount; m_jumping = true;
 	}
 	
 }

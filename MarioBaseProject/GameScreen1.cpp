@@ -43,7 +43,6 @@ void GameScreen1::Render()
 	mario->Render(camera);
 	luigi->Render(camera);
 	m_pow_block->Render(camera);
-	m_text->Render(10, 10);
 
 	for (int i = 0; i < m_tiles.size(); i++)
 	{
@@ -52,6 +51,9 @@ void GameScreen1::Render()
 
 	marioHealth->Render(); 
 	luigiHealth->Render();
+
+	m_mario_text->Render(20, 30);
+	m_luigi_text->Render(2014, 30);
 }
 
 void GameScreen1::Update(float deltaTime, SDL_Event e)
@@ -79,6 +81,7 @@ void GameScreen1::Update(float deltaTime, SDL_Event e)
 
 	for (int i = 0; i < m_enemies.size(); i++)
 	{
+		//MARIO DAMAGE
 		if (Collisions::Instance()->Box(mario->GetCollisionBox(), m_enemies[i]->GetCollisionBox()))
 		{
 			if (mario->GetPosition().y <= m_enemies[i]->GetPosition().y - 24)
@@ -87,10 +90,26 @@ void GameScreen1::Update(float deltaTime, SDL_Event e)
 			}
 			else
 			{
-				//TAKE DAMAGE MARIO XOXO
+				marioHealth->TakeDamage();
+				mario->Knockback(1);
+			}
+		}
+
+		//LUIGI DAMAGE
+		if (Collisions::Instance()->Box(luigi->GetCollisionBox(), m_enemies[i]->GetCollisionBox()))
+		{
+			if (luigi->GetPosition().y <= m_enemies[i]->GetPosition().y - 24)
+			{
+				m_enemies[i]->SetAlive(false);
+			}
+			else
+			{
+				luigiHealth->TakeDamage();
+				luigi->Knockback(1); 
 			}
 		}
 	}
+
 	if (Collisions::Instance()->Box(mario->GetCollisionBox(), luigi->GetCollisionBox()))
 	{
 		//std::cout << "Box hit!" << std::endl;
@@ -100,11 +119,16 @@ void GameScreen1::Update(float deltaTime, SDL_Event e)
 	if (camera->x < 0) { camera->x = 0; }
 	else if (camera->x > LEVEL_WIDTH - camera->w) { camera->x = LEVEL_WIDTH - camera->w; }
 
-	if (m_text != nullptr && score != old_score)
+	/*if (m_mario_text != nullptr && score != old_score)
+	{
+		m_mario_text->LoadFont("Fonts/Pacifico.ttf", 40, scoreMessage + std::to_string(score), { 255, 255, 255 });
+	}
+
+	if (m_luigi_text != nullptr && score != old_score)
 	{
 		old_score = score;
-		m_text->LoadFont("Fonts/Pacifico.ttf", 40, scoreMessage + std::to_string(score), { 255, 255, 255 });
-	}
+		m_luigi_text->LoadFont("Fonts/Pacifico.ttf", 40, scoreMessage + std::to_string(score), { 255, 255, 255 });
+	}*/
 
 
 }
@@ -142,11 +166,19 @@ bool GameScreen1::SetUpLevel()
 
 	m_pow_block = new PowBlock(m_renderer, m_level_map);
 	new_enemy_timer = 5;
-	score = 0; 
+	mario_score = 0; 
+	luigi_score = 0;
 
-	m_text = new TextRenderer(m_renderer);
+	m_mario_text = new TextRenderer(m_renderer);
+	m_luigi_text = new TextRenderer(m_renderer);
 
-	if (!m_text->LoadFont("Fonts/Pacifico.ttf", 40, scoreMessage + std::to_string(score), { 255, 255, 255 }))
+	if (!m_mario_text->LoadFont("Fonts/Pacifico.ttf", 40, scoreMessage + std::to_string(mario_score), { 255, 255, 255 }))
+	{
+		std::cout << "Failed to load font texture!" << std::endl;
+		return false;
+	}
+
+	if (!m_luigi_text->LoadFont("Fonts/Pacifico.ttf", 40, scoreMessage + std::to_string(luigi_score), { 255, 255, 255 }))
 	{
 		std::cout << "Failed to load font texture!" << std::endl;
 		return false;
@@ -613,8 +645,18 @@ void GameScreen1::UpdateCoins(float deltaTime, SDL_Event e)
 
 		if (Collisions::Instance()->Circle(m_coins[i], mario))
 		{
-			score += 15; 
+			mario_score += 15; 
 			m_coins[i]->SetAlive(false);
+
+			if (m_mario_text != nullptr) { m_mario_text->LoadFont("Fonts/Pacifico.ttf", 40, scoreMessage + std::to_string(mario_score), { 255, 255, 255 }); }
+		}
+
+		if (Collisions::Instance()->Circle(m_coins[i], luigi))
+		{
+			luigi_score += 15;
+			m_coins[i]->SetAlive(false);
+
+			if (m_luigi_text != nullptr) { m_luigi_text->LoadFont("Fonts/Pacifico.ttf", 40, scoreMessage + std::to_string(luigi_score), { 255, 255, 255 }); }
 		}
 
 		//if the coin is collected then schedule it for deletion

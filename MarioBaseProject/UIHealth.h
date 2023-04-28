@@ -13,6 +13,7 @@ public:
 
 	void Render();
 	bool GetIsDead() { return m_health <= 0;  }
+	void TakeDamage();
 private:
 
 	SDL_Renderer* m_renderer;
