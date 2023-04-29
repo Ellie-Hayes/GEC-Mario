@@ -51,17 +51,21 @@ void CharacterKoopa::Update(float deltaTime, SDL_Event e)
 
 	}
 
-	if (m_position.x < 0)
+	if (m_position.x < 0 || can_move_left == false)
 	{
 		m_facing_direction == FACING_RIGHT;
 		m_moving_right = true;
 		m_moving_left = false;
+
+		can_move_left = true;
 	}
-	else if (m_position.x > SCREEN_WIDTH - 25)
+	else if (m_position.x > SCREEN_WIDTH - 25 || can_move_right == false)
 	{
 		m_facing_direction == FACING_LEFT;
 		m_moving_left = true;
 		m_moving_right = false;
+
+		can_move_right = true; 
 	}
 	
 	SetMovingAndJump(deltaTime); 
@@ -96,6 +100,41 @@ void CharacterKoopa::Render(SDL_Rect* camera_rect)
 		m_texture->Render(portion_of_sprite, destRect, SDL_FLIP_HORIZONTAL);
 	}
 
+}
+
+void CharacterKoopa::Collisions(float deltaTime)
+{
+	std::cout << m_facing_direction << std::endl;
+	//collision position variables
+	int centralX_position = (int)(m_position.x + (m_texture->GetWidth() * 0.5)) / TILE_WIDTH;
+	int centralY_position = (int)(m_position.y + (m_texture->GetHeight() * 0.5)) / TILE_HEIGHT;
+
+	int foot_position = (int)(m_position.y + m_texture->GetHeight()) / TILE_HEIGHT;
+	int top_position = (int)(m_position.y) / TILE_HEIGHT;
+
+	int left_position = (int)(m_position.x / TILE_WIDTH);
+	int right_position = (int)((m_position.x + m_texture->GetWidth()) / TILE_WIDTH);
+
+	int lowerY_position = (int)(m_position.y + (m_texture->GetHeight() * 0.7)) / TILE_HEIGHT;
+
+	//DOWN
+	if (m_current_level_map->GetTileAt(foot_position, centralX_position) != 1) { AddGravity(deltaTime); }
+
+	if (m_current_level_map->GetTileAt(foot_position, centralX_position) == 2) { Knockback(0); }
+	else if (m_current_level_map->GetTileAt(foot_position, centralX_position) == 3) { Knockback(0); }
+
+	//UP
+	if (m_current_level_map->GetTileAt(top_position, centralX_position) == 1) { CancelJump(); }
+
+	//LEFT 
+	if (m_current_level_map->GetTileAt(centralY_position, left_position) == 1 && m_facing_direction == FACING_LEFT) { can_move_left = false; }
+	//else if (m_current_level_map->GetTileAt(lowerY_position, left_position) == 1 && m_facing_direction == FACING_RIGHT) { can_move_left = false; }
+	else { can_move_left = true; }
+
+	//RIGHT
+	if (m_current_level_map->GetTileAt(centralY_position, right_position) == 1 && m_facing_direction == FACING_RIGHT) { can_move_right = false; }
+	//else if (m_current_level_map->GetTileAt(lowerY_position, right_position) == 1 && m_facing_direction == FACING_LEFT) { can_move_right = false; }
+	else { can_move_right = true; }
 }
 
 void CharacterKoopa::TakeDamage()

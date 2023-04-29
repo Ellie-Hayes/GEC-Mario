@@ -25,35 +25,21 @@ void GameScreen1::Render()
 {
 	background->Render(camera);
 
-	for (int i = 0; i < m_decoTiles.size(); i++)
-	{
-		m_decoTiles[i]->Render(camera);
-	}
+	for (int i = 0; i < m_decoTiles.size(); i++) { m_decoTiles[i]->Render(camera); }
+	for (int i = 0; i < m_enemies.size(); i++) { m_enemies[i]->Render(camera); }
+	for (int i = 0; i < m_coins.size(); i++) { m_coins[i]->Render(camera); }
 
-	for (int i = 0; i < m_enemies.size(); i++)
-	{
-		m_enemies[i]->Render(camera);
-	}
-
-	for (int i = 0; i < m_coins.size(); i++)
-	{
-		m_coins[i]->Render(camera);
-	}
-
-	mario->Render(camera);
-	luigi->Render(camera);
+	if (mario->GetAlive()) { mario->Render(camera); }
+	if (luigi->GetAlive()) { luigi->Render(camera); }
 	m_pow_block->Render(camera);
 
-	for (int i = 0; i < m_tiles.size(); i++)
-	{
-		m_tiles[i]->Render(camera);
-	}
+	for (int i = 0; i < m_tiles.size(); i++) { m_tiles[i]->Render(camera); }
 
 	marioHealth->Render(); 
 	luigiHealth->Render();
 
-	m_mario_text->Render(20, 30);
-	m_luigi_text->Render(2014, 30);
+	m_mario_text->Render(250, 40 );
+	m_luigi_text->Render(1000, 30);
 }
 
 void GameScreen1::Update(float deltaTime, SDL_Event e)
@@ -61,23 +47,28 @@ void GameScreen1::Update(float deltaTime, SDL_Event e)
 	new_enemy_timer -= deltaTime;
 	if (new_enemy_timer <= 0)
 	{
-		CreateKoopa(Vector2D(80, 100), FACING_RIGHT, KOOPA_SPEED);
+		//CreateKoopa(Vector2D(80, 100), FACING_RIGHT, KOOPA_SPEED);
 		new_enemy_timer = 5; 
 	}
 
 	background->Update(deltaTime);
-	mario->Update(deltaTime, e);
-	luigi->Update(deltaTime, e);
+	if (mario->GetAlive()) { mario->Update(deltaTime, e); }
+	if (luigi->GetAlive()) { luigi->Update(deltaTime, e); }
 
 	UpdatePowBlock();
 	UpdateEnemies(deltaTime, e);
 	UpdateCoins(deltaTime, e);
-	
-	
-	if (Collisions::Instance()->Circle(mario, luigi))
+
+	if (mario->GetHealth() != marioHealth->GetHealth())
 	{
-		//std::cout << "Circle hit!" << std::endl;
+		marioHealth->SetHealth(mario->GetHealth());
 	}
+
+	if (luigi->GetHealth() != luigiHealth->GetHealth())
+	{
+		luigiHealth->SetHealth(luigi->GetHealth());
+	}
+	
 
 	for (int i = 0; i < m_enemies.size(); i++)
 	{
@@ -88,48 +79,35 @@ void GameScreen1::Update(float deltaTime, SDL_Event e)
 			{
 				m_enemies[i]->SetAlive(false);
 			}
-			else
+			else if (!mario->IsInvulnerable())
 			{
-				marioHealth->TakeDamage();
-				mario->Knockback(1);
+				marioHealth->SetHealth(mario->TakeDamage());
+				if (mario->GetPosition().x >= m_enemies[i]->GetPosition().x) { mario->Knockback(-1); }
+				else { mario->Knockback(1); }
+				
 			}
 		}
 
 		//LUIGI DAMAGE
 		if (Collisions::Instance()->Box(luigi->GetCollisionBox(), m_enemies[i]->GetCollisionBox()))
 		{
-			if (luigi->GetPosition().y <= m_enemies[i]->GetPosition().y - 24)
+			if (luigi->GetPosition().y <= m_enemies[i]->GetPosition().y - 18)
 			{
 				m_enemies[i]->SetAlive(false);
 			}
-			else
+			else if (!luigi->IsInvulnerable())
 			{
-				luigiHealth->TakeDamage();
+				luigiHealth->SetHealth(luigi->TakeDamage());
 				luigi->Knockback(1); 
 			}
 		}
 	}
 
-	if (Collisions::Instance()->Box(mario->GetCollisionBox(), luigi->GetCollisionBox()))
-	{
-		//std::cout << "Box hit!" << std::endl;
-	}
+	if (mario->GetAlive()) { camera->x = mario->GetPosition().x - SCREEN_WIDTH / 2; }
+	else if (luigi->GetAlive()) { camera->x = luigi->GetPosition().x - SCREEN_WIDTH / 2; }
 	
-	camera->x = mario->GetPosition().x - SCREEN_WIDTH / 2;
 	if (camera->x < 0) { camera->x = 0; }
 	else if (camera->x > LEVEL_WIDTH - camera->w) { camera->x = LEVEL_WIDTH - camera->w; }
-
-	/*if (m_mario_text != nullptr && score != old_score)
-	{
-		m_mario_text->LoadFont("Fonts/Pacifico.ttf", 40, scoreMessage + std::to_string(score), { 255, 255, 255 });
-	}
-
-	if (m_luigi_text != nullptr && score != old_score)
-	{
-		old_score = score;
-		m_luigi_text->LoadFont("Fonts/Pacifico.ttf", 40, scoreMessage + std::to_string(score), { 255, 255, 255 });
-	}*/
-
 
 }
 
@@ -157,8 +135,8 @@ bool GameScreen1::SetUpLevel()
 	camera = new SDL_Rect{ 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
 
 	background = new Background(m_renderer, "Images/BackgroundMB.png", Vector2D(0, 0));
-	mario = new CharacterMario(m_renderer, "Images/Characters/PlayerTest.png", Vector2D(80, 100), m_level_map, FACING_RIGHT, MOVEMENTSPEED);
-	luigi = new CharacterLuigi(m_renderer, "Images/Characters/CatTest.png", Vector2D(60, 100), m_level_map, FACING_LEFT, MOVEMENTSPEED);
+	mario = new CharacterMario(m_renderer, "Images/Characters/PlayerTest.png", Vector2D(80, 500), m_level_map, FACING_RIGHT, MOVEMENTSPEED);
+	luigi = new CharacterLuigi(m_renderer, "Images/Characters/CatTest.png", Vector2D(60, 500), m_level_map, FACING_LEFT, MOVEMENTSPEED);
 	
 	
 	CreateKoopa(Vector2D(80, 100), FACING_RIGHT, KOOPA_SPEED);
@@ -212,8 +190,8 @@ void GameScreen1::SetLevelMap()
 			
 			if (inNumber == 0)
 			{
-				int randomChance = rand() % 101;
-				if (randomChance > 99)
+				int randomChance = rand() % 201;
+				if (randomChance > 199)
 				{
 					PaintDecoTile(Vector2D(j, i), ("Tiles/Misc/Torch.png"));
 				}

@@ -12,8 +12,8 @@ public:
 	~UIHealth(); 
 
 	void Render();
-	bool GetIsDead() { return m_health <= 0;  }
-	void TakeDamage();
+	void SetHealth(int health) { m_health = health; }
+	int GetHealth() { return m_health; }
 private:
 
 	SDL_Renderer* m_renderer;

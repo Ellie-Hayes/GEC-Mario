@@ -9,7 +9,12 @@ Character::Character(SDL_Renderer* renderer, std::string imagePath, Vector2D sta
 	can_move_left = false;
 	can_move_right = false;
 	m_collision_radius = 15.0f;
-	m_knockback_force = 300;
+	m_knockback_force = 400;
+	knockback_offset = 0.2; 
+
+	m_health = 5; 
+	can_climb = false; 
+
 	m_texture = new Texture2D(m_renderer);
 	if (!m_texture->LoadFromFile(imagePath))
 	{
@@ -21,6 +26,7 @@ Character::Character(SDL_Renderer* renderer, std::string imagePath, Vector2D sta
 	m_source_rect = { 0, 0, m_texture->GetWidth(), m_texture->GetHeight() };
 	m_draw_rect = { 0, 0, m_texture->GetWidth(), m_texture->GetHeight() };
 
+	m_invulnerable_timer = INVULNERABLE_LENGTH; 
 }
 
 Character::~Character()
@@ -67,24 +73,41 @@ float Character::GetCollisionRadius()
 
 void Character::Knockback(int direction)
 {
+	knockback_directon = direction;
+
 	switch (direction)
 	{
 	case 0: 
+		m_jumping = false;
 		Jump(INITIAL_JUMP_FORCE);
 		break;
 	case 1:
 		m_is_knockedBack = true;
+		m_is_invulnerable = true;
 		Jump(INITIAL_KNOCKBACK_FORCE);
 		break;
 	case -1:
 		m_is_knockedBack = true;
+		m_is_invulnerable = true;
 		Jump(INITIAL_KNOCKBACK_FORCE);
 		break;
 	default:
 		break;
 	}
 
-	knockback_directon = direction; 
+	 
+}
+
+int Character::TakeDamage()
+{
+	m_health -= 1;
+	if (m_health <= 0)
+	{
+		m_health = 0;
+		m_alive = false;
+	}
+
+	return m_health; 
 }
 
 void Character::Collisions(float deltaTime)
@@ -102,8 +125,19 @@ void Character::Collisions(float deltaTime)
 	int lowerY_position = (int)(m_position.y + (m_texture->GetHeight() * 0.7)) / TILE_HEIGHT;
 	
 	//DOWN
-	if (m_current_level_map->GetTileAt(foot_position, centralX_position) != 1) { AddGravity(deltaTime); }
-	else { m_can_jump = true; m_is_knockedBack = false; }
+	if (m_current_level_map->GetTileAt(foot_position, centralX_position) != 1 
+		&& m_current_level_map->GetTileAt(foot_position, centralX_position) != 4 
+		&& m_current_level_map->GetTileAt(foot_position, centralX_position) != 7) 
+	{ AddGravity(deltaTime); }
+	else { m_can_jump = true; if (check_knockback) { m_is_knockedBack = false; check_knockback = false; } }
+
+	//DOWN CLIMBING
+	if (m_current_level_map->GetTileAt(foot_position, centralX_position) == 4) { can_climb = true; m_jumping = false; }
+	else { can_climb = false; }
+
+	//DOWN WATER LAVA
+	if (m_current_level_map->GetTileAt(foot_position, centralX_position) == 2 && !m_is_invulnerable) { Knockback(0); TakeDamage(); m_is_invulnerable = true; }
+	else if (m_current_level_map->GetTileAt(foot_position, centralX_position) == 3 && !m_is_invulnerable) { Knockback(0); TakeDamage(); m_is_invulnerable = true; }
 
 	//UP
 	if (m_current_level_map->GetTileAt(top_position, centralX_position) == 1) { CancelJump(); }
@@ -118,6 +152,11 @@ void Character::Collisions(float deltaTime)
 	else if(m_current_level_map->GetTileAt(lowerY_position, right_position) == 1) { can_move_right = false; }
 	else { can_move_right = true; }
 
+}
+
+void Character::Climb(float deltaTime)
+{
+	m_position.y -= deltaTime * CLIMB_SPEED;
 }
 
 void Character::MoveLeft(float deltaTime)
@@ -158,7 +197,11 @@ void Character::SetMovingAndJump(float deltaTime)
 
 		//is jump force 0?
 		if (m_jump_force <= 0.0f)
+		{
 			m_jumping = false;
+			//m_is_knockedBack = false;
+		}
+			
 	}
 
 	if (m_moving_left && can_move_left)
@@ -170,9 +213,29 @@ void Character::SetMovingAndJump(float deltaTime)
 		MoveRight(deltaTime);
 	}
 
-	if (m_is_knockedBack)
+	//Knockback and invulnerability
+	if (m_is_knockedBack) 
+	{ 
+		m_position.x += m_knockback_force * knockback_directon * deltaTime;
+		if(!check_knockback) 
+		{
+			knockback_offset -= deltaTime;
+			if (knockback_offset <= 0.0f)
+			{
+				knockback_offset = 0.2;
+				check_knockback = true;
+			}
+		}
+	}
+
+	if (m_is_invulnerable)
 	{
-		m_position.x += m_knockback_force * knockback_directon * deltaTime; 
+		m_invulnerable_timer -= deltaTime;
+		if (m_invulnerable_timer <= 0.0f)
+		{
+			m_invulnerable_timer = INVULNERABLE_LENGTH;
+			m_is_invulnerable = false; 
+		}
 	}
 
 }

@@ -33,6 +33,9 @@ public:
 	bool GetAlive() { return m_alive; }
 	void SetAlive(bool isAlive) { m_alive = isAlive; }
 	void Knockback(int direction);
+	bool IsInvulnerable() { return m_is_invulnerable; }
+	int TakeDamage();
+	int GetHealth() { return m_health; }
 
 	FACING m_facing_direction;
 	float m_movement_speed;
@@ -54,6 +57,7 @@ protected:
 	bool m_moving_right;
 	bool m_alive;
 	bool m_is_knockedBack;
+	bool m_is_invulnerable; 
 	int knockback_directon;
 
 	virtual void MoveLeft(float deltaTime);
@@ -61,11 +65,19 @@ protected:
 	virtual void AddGravity(float deltaTime);
 	virtual void SetMovingAndJump(float deltaTime);
 	virtual void Collisions(float deltaTime);
+	virtual void Climb(float deltaTime);
 
 	bool m_jumping;
 	bool m_can_jump;
 	float m_jump_force;
 	float m_knockback_force;
+	float m_invulnerable_timer;
+	float knockback_offset; 
+	bool check_knockback; 
+
+	bool can_climb;
+	bool m_climbing;
+	int m_health; 
 
 	virtual void Jump(int forceAmount);
 

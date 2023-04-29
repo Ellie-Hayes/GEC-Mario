@@ -33,11 +33,3 @@ void UIHealth::Render()
 
 }
 
-void UIHealth::TakeDamage()
-{
-	m_health -= 1;
-	if (m_health < 0)
-	{
-		m_health = 0; 
-	}
-}
