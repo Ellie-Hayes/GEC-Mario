@@ -54,6 +54,9 @@ void CharacterLuigi::Update(float deltaTime, SDL_Event e)
 		
 	}
 
+	if (m_position.x < 0) { can_move_left = false; }
+	else if (m_position.x > (MAP_WIDTH * TILE_WIDTH) - m_texture->GetWidth()) { can_move_right = false; }
+
 	if (m_climbing) { Climb(deltaTime); }
 	SetMovingAndJump(deltaTime);
 	

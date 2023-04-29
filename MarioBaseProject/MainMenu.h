@@ -18,9 +18,11 @@
 #include <vector>
 #include <unordered_set>  
 #include <sstream>
-class MainMenu : public GameScreen
+
+class MainMenu : GameScreen
 {
-	/*MainMenu(SDL_Renderer* renderer);
+public: 
+	MainMenu(SDL_Renderer* renderer);
 	~MainMenu();
 
 	void Render() override;
@@ -34,7 +36,6 @@ private:
 	void Set4BitTileNeighbours(std::vector<Vector2D>& passedVector, int typeCheck);
 	void CreateTiles(Vector2D position, std::string binaryType);
 	void CreateWaterLavaTiles(Vector2D position, std::string binaryType, std::string palette);
-	void CreatePlatforms(Vector2D position, std::string binaryType);
 	void PaintTile(Vector2D position, std::string filePath);
 	void PaintDecoTile(Vector2D position, std::string filePath);
 
@@ -52,7 +53,7 @@ private:
 	std::vector<Vector2D> waterPositions;
 	std::vector<Vector2D> lavaPositions;
 	std::vector<Vector2D> platformPositions;
-	std::string levelPalette;*/
+	std::string levelPalette;
 
 
 protected:
