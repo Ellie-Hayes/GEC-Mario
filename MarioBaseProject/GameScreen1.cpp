@@ -139,8 +139,8 @@ bool GameScreen1::SetUpLevel()
 	luigi = new CharacterLuigi(m_renderer, "Images/Characters/CatTest.png", Vector2D(60, 500), m_level_map, FACING_LEFT, MOVEMENTSPEED);
 	
 	
-	CreateKoopa(Vector2D(80, 100), FACING_RIGHT, KOOPA_SPEED);
-	CreateKoopa(Vector2D(100, 200), FACING_LEFT, KOOPA_SPEED);
+	//CreateKoopa(Vector2D(80, 100), FACING_RIGHT, KOOPA_SPEED);
+	//CreateKoopa(Vector2D(100, 200), FACING_LEFT, KOOPA_SPEED);
 
 	m_pow_block = new PowBlock(m_renderer, m_level_map);
 	new_enemy_timer = 5;

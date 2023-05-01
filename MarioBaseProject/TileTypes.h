@@ -239,6 +239,7 @@ struct WallBinaryTypes
         "10000100",
         "11010110",
         "01000110",
+        "11000110",
     };
 
     std::list<std::string> wallCornerRightBottom =
@@ -346,6 +347,7 @@ struct FourBitBinaryTypes
         "0011",
         "0001",
         "0100",
+        "0101",
     };
     
 };
