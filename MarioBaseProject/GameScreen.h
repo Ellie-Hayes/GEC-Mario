@@ -11,9 +11,13 @@ public:
 
 	virtual void Render();
 	virtual void Update(float deltaTime, SDL_Event e);
+	bool GetCompleted() { return level_complete; }
+	bool GetRestart() {}
 private:
 protected:
 	SDL_Renderer* m_renderer; 
+	bool level_complete;
+	bool level_restart; 
 	
 };
 

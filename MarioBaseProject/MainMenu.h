@@ -27,7 +27,6 @@ public:
 
 	void Render() override;
 	void Update(float deltaTime, SDL_Event e) override;
-
 private:
 	bool SetUpLevel();
 	void SetLevelMap();
@@ -54,8 +53,6 @@ private:
 	std::vector<Vector2D> lavaPositions;
 	std::vector<Vector2D> platformPositions;
 	std::string levelPalette;
-
-
 protected:
 
 };

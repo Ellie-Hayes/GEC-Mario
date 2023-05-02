@@ -17,7 +17,6 @@ void MainMenu::Render()
 	for (int i = 0; i < m_decoTiles.size(); i++) { m_decoTiles[i]->Render(camera); }
 	for (int i = 0; i < m_tiles.size(); i++) { m_tiles[i]->Render(camera); }
 
-
 	m_title_text->Render(250, 40);
 	m_play_text->Render(1000, 30);
 }
@@ -29,6 +28,19 @@ void MainMenu::Update(float deltaTime, SDL_Event e)
 
 	if (camera->x < 0) { camera->x = 0; }
 	else if (camera->x > LEVEL_WIDTH - camera->w) { camera->x = LEVEL_WIDTH - camera->w; }
+	
+	switch (e.type)
+	{
+	case SDL_KEYDOWN:
+		switch (e.key.keysym.sym)
+		{
+		case SDLK_SPACE:
+			level_complete = true;
+			std::cout << "HI" << endl; 
+			break;
+		}
+
+	}
 
 }
 

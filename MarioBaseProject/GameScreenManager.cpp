@@ -4,6 +4,7 @@
 #include "MainMenu.h"
 GameScreenManager::GameScreenManager(SDL_Renderer* renderer, SCREENS startScreen)
 {
+	level_num = 1; 
 	m_renderer = renderer; 
 	m_current_screen = nullptr;
 	ChangeScreen(startScreen);
@@ -24,6 +25,15 @@ void GameScreenManager::Render()
 void GameScreenManager::Update(float deltaTime, SDL_Event e)
 {
 	m_current_screen->Update(deltaTime, e);
+
+	if (m_current_screen->GetCompleted())
+	{
+		level_num += 1;
+		SCREENS level = static_cast<SCREENS>(level_num);
+		std::cout << level << endl; 
+		ChangeScreen(level);
+	}
+
 }
 
 void GameScreenManager::ChangeScreen(SCREENS new_screen)

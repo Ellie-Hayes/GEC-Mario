@@ -38,8 +38,10 @@ void GameScreen1::Render()
 	marioHealth->Render(); 
 	luigiHealth->Render();
 
-	m_mario_text->Render(250, 40 );
-	m_luigi_text->Render(1000, 30);
+	m_mario_text->Render(250, 80 );
+	m_luigi_text->Render(1650, 50);
+
+	
 }
 
 void GameScreen1::Update(float deltaTime, SDL_Event e)
@@ -68,40 +70,6 @@ void GameScreen1::Update(float deltaTime, SDL_Event e)
 	{
 		luigiHealth->SetHealth(luigi->GetHealth());
 	}
-	
-
-	for (int i = 0; i < m_enemies.size(); i++)
-	{
-		//MARIO DAMAGE
-		if (Collisions::Instance()->Box(mario->GetCollisionBox(), m_enemies[i]->GetCollisionBox()))
-		{
-			if (mario->GetPosition().y <= m_enemies[i]->GetPosition().y - 24)
-			{
-				m_enemies[i]->SetAlive(false);
-			}
-			else if (!mario->IsInvulnerable())
-			{
-				marioHealth->SetHealth(mario->TakeDamage());
-				if (mario->GetPosition().x >= m_enemies[i]->GetPosition().x) { mario->Knockback(-1); }
-				else { mario->Knockback(1); }
-				
-			}
-		}
-
-		//LUIGI DAMAGE
-		if (Collisions::Instance()->Box(luigi->GetCollisionBox(), m_enemies[i]->GetCollisionBox()))
-		{
-			if (luigi->GetPosition().y <= m_enemies[i]->GetPosition().y - 18)
-			{
-				m_enemies[i]->SetAlive(false);
-			}
-			else if (!luigi->IsInvulnerable())
-			{
-				luigiHealth->SetHealth(luigi->TakeDamage());
-				luigi->Knockback(1); 
-			}
-		}
-	}
 
 	if (mario->GetAlive()) { camera->x = mario->GetPosition().x - SCREEN_WIDTH / 2; }
 	else if (luigi->GetAlive()) { camera->x = luigi->GetPosition().x - SCREEN_WIDTH / 2; }
@@ -124,6 +92,18 @@ void GameScreen1::UpdatePowBlock()
 			mario->CancelJump();
 		}
 	}
+
+	if (Collisions::Instance()->Box(luigi->GetCollisionBox(), m_pow_block->GetCollisionsBox()) && m_pow_block->IsAvailable())
+	{
+		//collided while jumping
+		if (mario->IsJumping())
+		{
+			DoScreenShake();
+			background->SetScreenShake();
+			m_pow_block->TakeHit();
+			mario->CancelJump();
+		}
+	}
 }
 
 bool GameScreen1::SetUpLevel()
@@ -135,12 +115,11 @@ bool GameScreen1::SetUpLevel()
 	camera = new SDL_Rect{ 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
 
 	background = new Background(m_renderer, "Images/BackgroundMB.png", Vector2D(0, 0));
-	mario = new CharacterMario(m_renderer, "Images/Characters/PlayerTest.png", Vector2D(80, 500), m_level_map, FACING_RIGHT, MOVEMENTSPEED);
-	luigi = new CharacterLuigi(m_renderer, "Images/Characters/CatTest.png", Vector2D(60, 500), m_level_map, FACING_LEFT, MOVEMENTSPEED);
+	mario = new CharacterMario(m_renderer, "Images/Characters/PlayerTest.png", Vector2D(80, 400), m_level_map, FACING_RIGHT, MOVEMENTSPEED);
+	luigi = new CharacterLuigi(m_renderer, "Images/Characters/CatTest.png", Vector2D(60, 400), m_level_map, FACING_LEFT, MOVEMENTSPEED);
 	
-	
-	//CreateKoopa(Vector2D(80, 100), FACING_RIGHT, KOOPA_SPEED);
-	//CreateKoopa(Vector2D(100, 200), FACING_LEFT, KOOPA_SPEED);
+	//CreateKoopa(Vector2D(200, 100), FACING_RIGHT, KOOPA_SPEED);
+	CreateKoopa(Vector2D(400, 200), FACING_LEFT, KOOPA_SPEED);
 
 	m_pow_block = new PowBlock(m_renderer, m_level_map);
 	new_enemy_timer = 5;
@@ -199,7 +178,6 @@ void GameScreen1::SetLevelMap()
 
 			switch (inNumber)
 			{
-
 			case 1:
 				wallPositions.push_back(Vector2D(j, i));
 				break;
@@ -212,17 +190,8 @@ void GameScreen1::SetLevelMap()
 			case 4:
 				PaintDecoTile(Vector2D(j, i), "Tiles/Misc/Ladder.png");
 				break;
-			case 5:
-				PaintTile(Vector2D(j, i), "Tiles/Misc/PlatSupportL.png");
-				break;
-			case 6:
-				PaintTile(Vector2D(j, i), "Tiles/Misc/PlatSupportR.png");
-				break;
 			case 7:
 				PaintTile(Vector2D(j, i), "Tiles/Misc/PlatMiddle.png");
-				break;
-			case 8:
-				PaintTile(Vector2D(j, i), "Tiles/Misc/Torch.png");
 				break;
 			case 9:
 				CreateCoin(Vector2D(j, i));
@@ -576,17 +545,43 @@ void GameScreen1::UpdateEnemies(float deltaTime, SDL_Event e)
 		}
 		else
 		{
+			//POWBLOCK ENEMY KILL
 			if (Collisions::Instance()->Circle(m_enemies[i], mario))
 			{
 				if (m_enemies[i]->GetInjured())
 				{
 					m_enemies[i]->SetAlive(false);
 				}
-				else
-				{
-					//kill mario
-				}
+			}
 
+			//MARIO DAMAGE
+			if (Collisions::Instance()->Box(mario->GetCollisionBox(), m_enemies[i]->GetCollisionBox()))
+			{
+				if (mario->GetPosition().y <= m_enemies[i]->GetPosition().y - 24)
+				{
+					m_enemies[i]->SetAlive(false);
+				}
+				else if (!mario->IsInvulnerable())
+				{
+					marioHealth->SetHealth(mario->TakeDamage());
+					if (mario->GetPosition().x >= m_enemies[i]->GetPosition().x) { mario->Knockback(-1); }
+					else { mario->Knockback(1); }
+
+				}
+			}
+
+			//LUIGI DAMAGE
+			if (Collisions::Instance()->Box(luigi->GetCollisionBox(), m_enemies[i]->GetCollisionBox()))
+			{
+				if (luigi->GetPosition().y <= m_enemies[i]->GetPosition().y - 18)
+				{
+					m_enemies[i]->SetAlive(false);
+				}
+				else if (!luigi->IsInvulnerable())
+				{
+					luigiHealth->SetHealth(luigi->TakeDamage());
+					luigi->Knockback(1);
+				}
 			}
 		}
 
