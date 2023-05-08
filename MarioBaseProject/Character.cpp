@@ -173,10 +173,21 @@ void Character::MoveRight(float deltaTime)
 
 void Character::AddGravity(float deltaTime)
 {
+	/*if (level_loaded)
+	{
+		if (m_position.y > SCREEN_HEIGHT - m_texture->GetHeight())
+		{
+			m_can_jump = true;
+		}
+		else
+		{
+			m_position.y += deltaTime * GRAVITYSTRENGTH;
+		}
+	}*/
 	
 	if (m_position.y > SCREEN_HEIGHT - m_texture->GetHeight())
 	{
-		m_can_jump = true; 
+		m_can_jump = true;
 	}
 	else
 	{

@@ -36,7 +36,7 @@ public:
 	bool IsInvulnerable() { return m_is_invulnerable; }
 	int TakeDamage();
 	int GetHealth() { return m_health; }
-
+	void SetLevelLoaded(bool loadComplete) { level_loaded = loadComplete; }
 	FACING m_facing_direction;
 	float m_movement_speed;
 private:
@@ -51,6 +51,7 @@ protected:
 	SDL_Rect m_draw_rect; 
 	float m_collision_radius;
 
+	bool level_loaded; 
 	bool can_move_left;
 	bool can_move_right; 
 	bool m_moving_left;

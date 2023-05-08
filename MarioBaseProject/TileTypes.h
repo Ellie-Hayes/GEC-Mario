@@ -348,6 +348,7 @@ struct FourBitBinaryTypes
         "0001",
         "0100",
         "0101",
+        "0010",
     };
     
 };

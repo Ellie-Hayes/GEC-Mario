@@ -31,28 +31,16 @@ private:
 	bool SetUpLevel();
 	void SetLevelMap();
 
-	void Set8BitTileNeighbours(std::vector<Vector2D>& passedVector, int typeCheck);
-	void Set4BitTileNeighbours(std::vector<Vector2D>& passedVector, int typeCheck);
-	void CreateTiles(Vector2D position, std::string binaryType);
-	void CreateWaterLavaTiles(Vector2D position, std::string binaryType, std::string palette);
-	void PaintTile(Vector2D position, std::string filePath);
-	void PaintDecoTile(Vector2D position, std::string filePath);
-
 	SDL_Rect* camera;
-	LevelMap* m_level_map;
 	Background* background;
-	std::vector<Tile*> m_tiles;
-	std::vector<Tile*> m_decoTiles;
 
 	TextRenderer* m_title_text;
 	TextRenderer* m_play_text;
+	TextRenderer* m_loading_text;
 
-	Direction2D* direction2D;
-	std::vector<Vector2D> wallPositions;
-	std::vector<Vector2D> waterPositions;
-	std::vector<Vector2D> lavaPositions;
-	std::vector<Vector2D> platformPositions;
-	std::string levelPalette;
+	int m_dots; 
+	float dot_timer; 
+
 protected:
 
 };
