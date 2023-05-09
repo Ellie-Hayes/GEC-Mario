@@ -54,14 +54,19 @@ void GameScreen1::Render()
 
 void GameScreen1::Update(float deltaTime, SDL_Event e)
 {
-	
-
 	new_enemy_timer -= deltaTime;
-	if (new_enemy_timer <= 0)
+	if (new_enemy_timer <= 0 && level_loaded)
 	{
 		//CreateKoopa(Vector2D(80, 100), FACING_RIGHT, KOOPA_SPEED);
 		mario->SetLevelLoaded(true);
-		new_enemy_timer = 5000; 
+		luigi->SetLevelLoaded(true);
+
+		for (int i = 0; i < m_enemies.size(); i++)
+		{
+			m_enemies[i]->SetLevelLoaded(true);
+		}
+
+		level_loaded = false; 
 	}
 
 	background->Update(deltaTime);
@@ -106,7 +111,7 @@ bool GameScreen1::SetUpLevel()
 	CreateKoopa(Vector2D(400, 200), FACING_LEFT, KOOPA_SPEED);
 
 	m_pow_block = new PowBlock(m_renderer, m_level_map);
-	new_enemy_timer = 10;
+	new_enemy_timer = 3;
 	mario_score = 0; 
 	luigi_score = 0;
 
@@ -127,14 +132,17 @@ bool GameScreen1::SetUpLevel()
 
 	marioHealth = new UIHealth(m_renderer, "Images/Characters/UIPlayer.png", Vector2D(10, 10));
 	luigiHealth = new UIHealth(m_renderer, "Images/Characters/UICat.png", Vector2D(SCREEN_WIDTH - 402, 10));
+	level_loaded = true; 
 	return false;
+
+
 }
 
 void GameScreen1::SetLevelMap()
 {
 	ifstream inFile;
 
-	inFile.open("Levels/Level2.txt");
+	inFile.open("Levels/Level1.txt");
 
 	if (!inFile.good())
 	{
