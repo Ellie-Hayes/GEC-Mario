@@ -1,7 +1,7 @@
 # GEC-Mario
 
 <div align="center"><img src="app/src/main/res/mipmap-xhdpi/ic_launcher.png"></div>
-<h1 align="center">Ellie simulator: A totally accurate mario simulator #not a mario game</h1>
+<h1 align="center">Cave Quest 3</h1>
 <p align="center"><strong>A short platformer game based on the mechanics of Mario</strong>
 <br>Comment</p>
 <br/>
@@ -15,13 +15,11 @@ The idea behind first implementation. What is expected, what should be included,
 
 <h2>Key learnings</h2>
 
-- Be 
-- clear
-- brief 
-- and 
-- concise
-
-If project has been improved after submission, here is a good place to specify it.
+- Inheritance and polymorphism in c++ 
+- File Handling
+- Procedurally textured tiles 
+- Basic collision systems including bounding boxes and bounding circles 
+- Scene management
 
 <h2>Installation</h2>
 
@@ -31,11 +29,8 @@ If project has been improved after submission, here is a good place to specify i
 
 Or use <a href="https://github.com/cesarferreira/dryrun" target="_blank">`dryrun`</a> by <a href="https://github.com/cesarferreira" target="_blank">@CesarFerreira</a>
 
-<h2>Contributing</h2>
-Mention pull requests. Link to an example and/or put it down here
-
 <h2>Project status</h2>
-Insert here
+Finished
 
 <h2>Credits</h2>
 
