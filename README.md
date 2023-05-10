@@ -1,13 +1,13 @@
 # GEC-Mario
 
 <div align="center"><img src="app/src/main/res/mipmap-xhdpi/ic_launcher.png"></div>
-<h1 align="center">Name</h1>
-<p align="center"><strong>Description</strong>
+<h1 align="center">Ellie simulator: A totally accurate mario simulator #not a mario game</h1>
+<p align="center"><strong>A short platformer game based on the mechanics of Mario</strong>
 <br>Comment</p>
 <br/>
 <div align="center"><img src="demo.gif"></img></div>
 <h2>About</h2>
-Context and progress go here
+
 
 <h2>Goal and requirements</h2>
 
