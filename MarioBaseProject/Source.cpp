@@ -30,7 +30,7 @@ int main(int argc, char* args[])
 {
 	if (InitSDL())
 	{
-		LoadMusic("Music/Mario.mp3");
+		LoadMusic("Music/GameMusic.mp3");
 		if (Mix_PlayingMusic() == 0)
 		{
 			Mix_PlayMusic(g_music, -1);
@@ -180,10 +180,11 @@ void CLoseSDL()
 
 	Mix_FreeMusic(g_music);
 	g_music = nullptr;
-
+	Mix_CloseAudio();
 
 	IMG_Quit();
 	SDL_Quit();
 	TTF_Quit();
+	
 
 }

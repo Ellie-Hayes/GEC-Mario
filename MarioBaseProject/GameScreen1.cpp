@@ -24,6 +24,8 @@ GameScreen1::~GameScreen1()
 	m_mario_text = nullptr;
 	delete m_luigi_text; 
 	m_luigi_text = nullptr;
+	delete m_end_door;
+	m_end_door = nullptr;
 
 	m_enemies.clear();
 	m_coins.clear(); 
@@ -37,6 +39,8 @@ void GameScreen1::Render()
 	for (int i = 0; i < m_enemies.size(); i++) { m_enemies[i]->Render(camera); }
 	for (int i = 0; i < m_coins.size(); i++) { m_coins[i]->Render(camera); }
 
+	m_end_door->Render(camera);
+
 	if (mario->GetAlive()) { mario->Render(camera); }
 	if (luigi->GetAlive()) { luigi->Render(camera); }
 	m_pow_block->Render(camera);
@@ -48,7 +52,7 @@ void GameScreen1::Render()
 
 	m_mario_text->Render(250, 80 );
 	m_luigi_text->Render(1650, 50);
-
+	
 	
 }
 
@@ -73,6 +77,8 @@ void GameScreen1::Update(float deltaTime, SDL_Event e)
 	if (mario->GetAlive()) { mario->Update(deltaTime, e); }
 	if (luigi->GetAlive()) { luigi->Update(deltaTime, e); }
 
+	if (!mario->GetAlive() && !luigi->GetAlive()) { level_restart = true; }
+
 	UpdatePowBlock();
 	UpdateEnemies(deltaTime, e);
 	UpdateCoins(deltaTime, e);
@@ -93,6 +99,7 @@ void GameScreen1::Update(float deltaTime, SDL_Event e)
 	if (camera->x < 0) { camera->x = 0; }
 	else if (camera->x > LEVEL_WIDTH - camera->w) { camera->x = LEVEL_WIDTH - camera->w; }
 
+	EndDoorCollisions();
 }
 
 bool GameScreen1::SetUpLevel()
@@ -106,12 +113,13 @@ bool GameScreen1::SetUpLevel()
 	background = new Background(m_renderer, "Images/BackgroundMB.png", Vector2D(0, 0));
 	mario = new CharacterMario(m_renderer, "Images/Characters/PlayerTest.png", Vector2D(80, 400), m_level_map, FACING_RIGHT, MOVEMENTSPEED);
 	luigi = new CharacterLuigi(m_renderer, "Images/Characters/CatTest.png", Vector2D(60, 400), m_level_map, FACING_LEFT, MOVEMENTSPEED);
-	
-	//CreateKoopa(Vector2D(200, 100), FACING_RIGHT, KOOPA_SPEED);
-	CreateKoopa(Vector2D(400, 200), FACING_LEFT, KOOPA_SPEED);
+	m_end_door = new EndDoor(m_renderer, "Images/EndDoor.png", Vector2D(500, 620));
 
-	m_pow_block = new PowBlock(m_renderer, m_level_map);
-	new_enemy_timer = 3;
+	//CreateKoopa(Vector2D(200, 100), FACING_RIGHT, KOOPA_SPEED);
+	//CreateKoopa(Vector2D(400, 200), FACING_LEFT, KOOPA_SPEED);
+
+	m_pow_block = new PowBlock(m_renderer, m_level_map, Vector2D(60, 300));
+	new_enemy_timer = 8;
 	mario_score = 0; 
 	luigi_score = 0;
 
@@ -132,6 +140,8 @@ bool GameScreen1::SetUpLevel()
 
 	marioHealth = new UIHealth(m_renderer, "Images/Characters/UIPlayer.png", Vector2D(10, 10));
 	luigiHealth = new UIHealth(m_renderer, "Images/Characters/UICat.png", Vector2D(SCREEN_WIDTH - 402, 10));
+
+	coinSound = Mix_LoadWAV("Music/Coin.wav");
 	level_loaded = true; 
 	return false;
 
@@ -182,6 +192,9 @@ void GameScreen1::SetLevelMap()
 			case 4:
 				PaintDecoTile(Vector2D(j, i), "Tiles/Misc/Ladder.png");
 				break;
+			case 5: 
+				enemyPositions.push_back(Vector2D(j, i));
+				break;
 			case 7:
 				PaintTile(Vector2D(j, i), "Tiles/Misc/PlatMiddle.png");
 				break;
@@ -211,8 +224,8 @@ void GameScreen1::SetLevelMap()
 	Set8BitTileNeighbours(wallPositions, 1);
 	Set4BitTileNeighbours(waterPositions, 2);
 	Set4BitTileNeighbours(lavaPositions, 3);
+	SetEnemyPositions(enemyPositions);
 
-	//luigi->SetLevelLoaded(true);
 }
 
 

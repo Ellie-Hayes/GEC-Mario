@@ -22,8 +22,8 @@ void MainMenu::Render()
 	for (int i = 0; i < m_tiles.size(); i++) { m_tiles[i]->Render(camera); }
 
 	m_title_text->Render(250, 40);
-	m_play_text->Render(1000, 30);
-	m_loading_text->Render(500, 500);
+	m_play_text->Render( 300, 350);
+	m_loading_text->Render(1000, 350);
 
 	
 }
@@ -89,7 +89,7 @@ bool MainMenu::SetUpLevel()
 	m_dots = 1; 
 	dot_timer = 1.0f; 
 
-	if (!m_title_text->LoadFont("Fonts/Pacifico.ttf", 200, "Totally a game title", {255, 255, 255}))
+	if (!m_title_text->LoadFont("Fonts/Pacifico.ttf", 200, "Cave Quest 3", {255, 255, 255}))
 	{
 		std::cout << "Failed to load font texture!" << std::endl;
 		return false;

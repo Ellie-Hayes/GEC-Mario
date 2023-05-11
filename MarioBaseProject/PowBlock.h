@@ -8,7 +8,7 @@
 class PowBlock
 {
 public:
-	PowBlock(SDL_Renderer* renderer, LevelMap* map);
+	PowBlock(SDL_Renderer* renderer, LevelMap* map, Vector2D position);
 	~PowBlock(); 
 
 	void Render(SDL_Rect* camera_rect);

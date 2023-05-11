@@ -8,6 +8,7 @@
 #include "constants.h"
 #include "Texture2D.h"
 #include "LevelMap.h"
+#include <SDL_mixer.h>
 
 class Texture2D; 
 
@@ -67,6 +68,7 @@ protected:
 	virtual void SetMovingAndJump(float deltaTime);
 	virtual void Collisions(float deltaTime);
 	virtual void Climb(float deltaTime);
+	virtual void PlaySound(Mix_Chunk* sound);
 
 	bool m_jumping;
 	bool m_can_jump;
@@ -81,6 +83,7 @@ protected:
 	int m_health; 
 
 	virtual void Jump(int forceAmount);
+	Mix_Chunk* jumpSound;
 
 };
 

@@ -25,6 +25,7 @@ Character::Character(SDL_Renderer* renderer, std::string imagePath, Vector2D sta
 
 	m_source_rect = { 0, 0, m_texture->GetWidth(), m_texture->GetHeight() };
 	m_draw_rect = { 0, 0, m_texture->GetWidth(), m_texture->GetHeight() };
+	jumpSound = Mix_LoadWAV("Music/Jump.wav");
 
 	m_invulnerable_timer = INVULNERABLE_LENGTH; 
 }
@@ -159,6 +160,11 @@ void Character::Climb(float deltaTime)
 	m_position.y -= deltaTime * CLIMB_SPEED;
 }
 
+void Character::PlaySound(Mix_Chunk* sound)
+{
+	Mix_PlayChannel(-1, sound, 0);
+}
+
 void Character::MoveLeft(float deltaTime)
 {
 	m_position.x -= deltaTime * m_movement_speed;
@@ -249,6 +255,7 @@ void Character::Jump(int forceAmount)
 	{
 		m_can_jump = false;
 		m_jump_force = forceAmount; m_jumping = true;
+		PlaySound(jumpSound);
 	}
 	
 }

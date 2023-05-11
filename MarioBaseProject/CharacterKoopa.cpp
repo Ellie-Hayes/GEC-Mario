@@ -26,16 +26,20 @@ void CharacterKoopa::Update(float deltaTime, SDL_Event e)
 	if (!m_injured)
 	{
 		//enemy is not injured so move
-		if (m_facing_direction == FACING_LEFT)
+		if (level_loaded)
 		{
-			m_moving_left = true;
-			m_moving_right = false;
+			if (m_facing_direction == FACING_LEFT)
+			{
+				m_moving_left = true;
+				m_moving_right = false;
+			}
+			else if (m_facing_direction == FACING_RIGHT)
+			{
+				m_moving_right = true;
+				m_moving_left = false;
+			}
 		}
-		else if (m_facing_direction == FACING_RIGHT)
-		{
-			m_moving_right = true;
-			m_moving_left = false;
-		}
+		
 	}
 	else
 	{
@@ -65,8 +69,9 @@ void CharacterKoopa::Update(float deltaTime, SDL_Event e)
 		m_moving_left = true;
 		m_moving_right = false;
 
-		can_move_right = true; 
+		can_move_right = true;
 	}
+	
 	
 	SetMovingAndJump(deltaTime); 
 

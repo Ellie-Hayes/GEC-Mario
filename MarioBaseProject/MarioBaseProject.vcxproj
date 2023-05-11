@@ -177,10 +177,12 @@
     <ClCompile Include="EndDoor.cpp" />
     <ClCompile Include="GameScreen.cpp" />
     <ClCompile Include="GameScreen1.cpp" />
+    <ClCompile Include="GameScreen2.cpp" />
     <ClCompile Include="GameScreenManager.cpp" />
     <ClCompile Include="LevelMap.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="PowBlock.cpp" />
+    <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="TextRenderer.cpp" />
     <ClCompile Include="Texture2D.cpp" />
@@ -210,10 +212,12 @@
     <ClInclude Include="EndDoor.h" />
     <ClInclude Include="GameScreen.h" />
     <ClInclude Include="GameScreen1.h" />
+    <ClInclude Include="GameScreen2.h" />
     <ClInclude Include="GameScreenManager.h" />
     <ClInclude Include="LevelMap.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="PowBlock.h" />
+    <ClInclude Include="SoundManager.h" />
     <ClInclude Include="TextRenderer.h" />
     <ClInclude Include="Texture2D.h" />
     <ClInclude Include="Tile.h" />
