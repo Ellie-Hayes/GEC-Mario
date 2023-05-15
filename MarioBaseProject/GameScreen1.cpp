@@ -118,7 +118,7 @@ bool GameScreen1::SetUpLevel()
 	//CreateKoopa(Vector2D(200, 100), FACING_RIGHT, KOOPA_SPEED);
 	//CreateKoopa(Vector2D(400, 200), FACING_LEFT, KOOPA_SPEED);
 
-	m_pow_block = new PowBlock(m_renderer, m_level_map, Vector2D(60, 300));
+	m_pow_block = new PowBlock(m_renderer, m_level_map, Vector2D(150, 400));
 	new_enemy_timer = 8;
 	mario_score = 0; 
 	luigi_score = 0;

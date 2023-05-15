@@ -89,7 +89,7 @@ bool MainMenu::SetUpLevel()
 	m_dots = 1; 
 	dot_timer = 1.0f; 
 
-	if (!m_title_text->LoadFont("Fonts/Pacifico.ttf", 200, "Cave Quest 3", {255, 255, 255}))
+	if (!m_title_text->LoadFont("Fonts/Pacifico.ttf", 200, "Cave Quest", {255, 255, 255}))
 	{
 		std::cout << "Failed to load font texture!" << std::endl;
 		return false;
