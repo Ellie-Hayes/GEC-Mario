@@ -1,7 +1,7 @@
 # GEC-Mario
 
 <div align="center"><img src="app/src/main/res/mipmap-xhdpi/ic_launcher.png"></div>
-<h1 align="center">Cave Quest 3</h1>
+<h1 align="center">Cave Quest</h1>
 <p align="center"><strong>A short platformer game based on the mechanics of Mario</strong>
 <br/>
 <div align="center"><img src="demo.gif"></img></div>
